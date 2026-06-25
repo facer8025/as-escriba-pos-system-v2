@@ -1,0 +1,80 @@
+# =============================================================================
+# as-escriba-pos-system-v2 — .gitignore
+# ESCRIBA POS - Sistema de Punto de Venta e Inventario
+# =============================================================================
+
+# ==================== Node.js / Frontend ====================
+frontend/node_modules/
+frontend/dist/
+frontend/.tsbuildinfo
+frontend/*.tsbuildinfo
+frontend/npm-debug.log*
+frontend/yarn-error.log*
+frontend/yarn-debug.log*
+
+# ==================== Java / Maven / Backend ====================
+backend/target/
+backend/*.class
+backend/*.jar
+backend/*.war
+backend/*.ear
+backend/*.log
+backend/*.nar
+backend/hs_err_pid*
+backend/replay_pid*
+backend/.mvn/timing*
+backend/.mvn/.gradle/
+
+# ==================== Uploads (generados en tiempo de ejecución) ====================
+frontend/public/uploads/
+backend/uploads/
+uploads/
+
+# ==================== Docker ====================
+docker-compose.override.yml
+
+# ==================== IDE / Editors ====================
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+*.swp
+*.swo
+*~
+*.sublime-workspace
+*.sublime-project
+
+# ==================== OS Files ====================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# ==================== Environment ====================
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# ==================== Logs ====================
+*.log
+logs/
+
+# ==================== Database ====================
+database/seed/*.csv
+database/seed/*.json
+!database/seed/*.sql
+
+# ==================== Misc ====================
+*.bak
+*.orig
+*.tmp
+.cache/
+tmp/

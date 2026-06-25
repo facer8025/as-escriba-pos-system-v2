@@ -1,0 +1,208 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-surface-100 dark:border-surface-700;
+  }
+
+  body {
+    @apply bg-[#efeae4] text-surface-800 dark:bg-[#0a0a1a] dark:text-surface-100;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  /* Scrollbar personalizada */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-surface-300 dark:bg-surface-600 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-surface-400 dark:bg-surface-500;
+  }
+}
+
+@layer components {
+  /* Card base */
+  .card {
+    @apply bg-[#f7f4f0] dark:bg-[#13132b] rounded-xl shadow-sm
+           border border-surface-100 dark:border-surface-800
+           transition-all duration-200;
+  }
+
+  .card-hover {
+    @apply card hover:shadow-card-hover hover:-translate-y-0.5;
+  }
+
+  /* Botones */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2.5
+           text-sm font-medium rounded-lg
+           transition-all duration-200
+           focus:outline-none focus:ring-2 focus:ring-offset-2
+           disabled:opacity-50 disabled:cursor-not-allowed
+           active:scale-[0.98];
+  }
+
+  .btn-primary {
+    @apply btn bg-primary-500 text-white hover:bg-primary-600 
+           focus:ring-primary-500 shadow-soft;
+  }
+
+  .btn-secondary {
+    @apply btn bg-[#f7f4f0] dark:bg-surface-800 text-surface-700 dark:text-surface-200 
+           border border-surface-200 dark:border-surface-600
+           hover:bg-surface-50 dark:hover:bg-surface-700
+           focus:ring-surface-400;
+  }
+
+  .btn-danger {
+    @apply btn bg-red-600 text-white hover:bg-red-700 
+           focus:ring-red-500 shadow-soft;
+  }
+
+  .btn-ghost {
+    @apply btn text-surface-600 dark:text-surface-400 
+           hover:bg-surface-100 dark:hover:bg-surface-800
+           focus:ring-surface-400;
+  }
+
+  /* Inputs */
+  .input {
+    @apply w-full px-3.5 py-2.5 text-sm rounded-lg
+           bg-[#f7f4f0] dark:bg-surface-800
+           border border-surface-200 dark:border-surface-600
+           text-surface-800 dark:text-surface-100
+           placeholder:text-surface-400 dark:placeholder:text-surface-500
+           focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent
+           transition-all duration-200;
+  }
+
+  .input-error {
+    @apply input border-red-500 focus:ring-red-500;
+  }
+
+  .label {
+    @apply block text-sm font-medium text-surface-700 dark:text-surface-300 mb-1.5;
+  }
+
+  /* Badges */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full 
+           text-xs font-medium;
+  }
+
+  .badge-success {
+    @apply badge bg-accent-100 text-accent-700 dark:bg-accent-900/30 dark:text-accent-400;
+  }
+
+  .badge-warning {
+    @apply badge bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400;
+  }
+
+  .badge-danger {
+    @apply badge bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400;
+  }
+
+  .badge-info {
+    @apply badge bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400;
+  }
+
+  .badge-neutral {
+    @apply badge bg-surface-100 text-surface-700 dark:bg-surface-700 dark:text-surface-300;
+  }
+
+  /* Tablas */
+  .table-container {
+    @apply w-full overflow-x-auto rounded-xl border border-surface-100 dark:border-surface-700;
+  }
+
+  .table {
+    @apply w-full text-sm;
+  }
+
+  .table th {
+    @apply px-4 py-3 text-left text-xs font-semibold 
+           text-surface-500 dark:text-surface-400 uppercase tracking-wider
+           bg-[#efeae4] dark:bg-surface-800/50;
+  }
+
+  .table td {
+    @apply px-4 py-3 text-surface-700 dark:text-surface-300
+           border-t border-surface-100 dark:border-surface-800;
+  }
+
+  .table tr:hover td {
+    @apply bg-surface-50/50 dark:bg-surface-800/30;
+  }
+
+  /* Modal */
+  .modal-overlay {
+    @apply fixed inset-0 z-50 flex items-center justify-center 
+           bg-black/50 backdrop-blur-sm animate-fade-in;
+  }
+
+  .modal-content {
+    @apply bg-[#f7f4f0] dark:bg-[#13132b] rounded-2xl shadow-md
+           border border-surface-100 dark:border-surface-800
+           animate-scale-in max-h-[90vh] overflow-y-auto;
+  }
+
+  /* Skeleton loading */
+  .skeleton {
+    @apply bg-surface-200/50 dark:bg-surface-700 rounded animate-pulse;
+  }
+
+  /* Transiciones de página */
+  .page-enter {
+    @apply animate-fade-in;
+  }
+}
+
+/* Tema oscuro para inputs de fecha */
+.dark input[type="date"],
+.dark input[type="datetime-local"] {
+  color-scheme: dark;
+}
+
+/* Tema oscuro para tooltips de Recharts */
+.dark .recharts-tooltip-wrapper .recharts-default-tooltip {
+  background: #1a1a3e !important;
+  border-color: #2a2a5e !important;
+}
+
+.dark .recharts-tooltip-wrapper .recharts-default-tooltip .recharts-tooltip-label {
+  color: #c7d2fe !important;
+}
+
+.dark .recharts-tooltip-wrapper .recharts-default-tooltip .recharts-tooltip-item {
+  color: #e0e7ff !important;
+}
+
+/* ============================================================
+   MEJORA DE CONTRASTE EN TEMA LIGHT
+   ============================================================
+   Los colores surface-400 y surface-500 tienen bajo contraste
+   sobre los fondos cálidos (#efeae4, #f7f4f0). Se oscurecen
+   1-2 tonos para cumplir WCAG AA (4.5:1).
+   En dark mode se mantienen los colores originales de Tailwind.
+   ============================================================ */
+
+:not(.dark) .text-surface-400 {
+  color: #9ca3af !important;
+}
+:not(.dark) .text-surface-500 {
+  color: #78828c !important;
+}
+:not(.dark) .text-surface-600 {
+  color: #5f6872 !important;
+}

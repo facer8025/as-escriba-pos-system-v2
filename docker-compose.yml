@@ -1,0 +1,116 @@
+services:
+  # ============================================================
+  # PostgreSQL - Base de datos principal
+  # ============================================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: escriba-pos-db
+    environment:
+      POSTGRES_DB: escriba_pos
+      POSTGRES_USER: escriba_user
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-escriba_secret_2025}
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init:/docker-entrypoint-initdb.d
+    networks:
+      - escriba-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U escriba_user -d escriba_pos"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # ============================================================
+  # Redis - Caché y sesiones
+  # ============================================================
+  redis:
+    image: redis:7-alpine
+    container_name: escriba-pos-redis
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - escriba-network
+    restart: unless-stopped
+
+  # ============================================================
+  # Spring Boot Backend
+  # ============================================================
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        JAVA_VERSION: "21"
+        CACHE_BUST: "${CACHE_BUST:-1}"
+    container_name: escriba-pos-backend
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-dev}
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: escriba_pos
+      DB_USER: escriba_user
+      DB_PASSWORD: ${DB_PASSWORD:-escriba_secret_2025}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      JWT_SECRET: ${JWT_SECRET:-escriba-jwt-secret-key-must-be-256-bits-long-minimum}
+      JWT_EXPIRATION: 86400000
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173,http://localhost:3000}
+      DIAN_SANDBOX: ${DIAN_SANDBOX:-true}
+    ports:
+      - "8082:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - escriba-network
+    restart: unless-stopped
+
+  # ============================================================
+  # React Frontend
+  # ============================================================
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL:-/api/v1}
+    container_name: escriba-pos-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - escriba-network
+    restart: unless-stopped
+
+  # ============================================================
+  # Adminer - Gestión visual de BD (solo dev)
+  # ============================================================
+  adminer:
+    image: adminer:latest
+    container_name: escriba-pos-adminer
+    ports:
+      - "8081:8080"
+    depends_on:
+      - postgres
+    networks:
+      - escriba-network
+    profiles:
+      - dev
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  escriba-network:
+    driver: bridge
