@@ -20,8 +20,9 @@ Módulo de inventario con 6 sub-páginas: Resumen (estadísticas + tabla de prod
 - Kardex con selector de producto y tabla de movimientos ordenados por fecha
 - Alertas calculadas desde `GET /products` filtrado por stock actual vs mínimo
 - `refetchInterval: 30000` en todas las consultas para datos frescos
+- **Exportación 100% client-side** en Resumen: PDF (jspdf + jspdf-autotable), Excel (xlsx), CSV (nativo UTF-8 con BOM). Sin necesidad de endpoint backend.
 
-## API Contracts
+## Features
 - `GET /api/v1/inventory/summary?companyId=X`
 - `GET /api/v1/inventory/warehouses?companyId=X`
 - `POST /api/v1/inventory/entries`

@@ -3,6 +3,7 @@
 > **Proyecto:** `as-escriba-pos-system-v2`
 > **Última actualización:** 2026-06-24
 > **Estado general:** 🟢 Rendimiento optimizado — Stress test superado (100K productos, 50K ventas)
+> **Últimas correcciones:** ✅ Importar/Exportar funcional · ✅ Imágenes 5MB · ✅ Galería en detalle · ✅ Thumbnails en catálogo
 
 ---
 
@@ -19,7 +20,9 @@ docs/
 │   ├── IS-003-cierre-caja.md
 │   ├── IS-004-flujo-venta-completo.md
 │   ├── IS-005-ventas-en-espera.md
-│   └── IS-006-seguridad.md
+│   ├── IS-006-seguridad.md
+│   ├── IS-007-exportar-inventario.md   ← Exportación PDF/Excel/CSV multi-módulo
+│   └── IS-008-gestion-usuarios.md      ← CRUD completo de usuarios
 ├── adr/
 │   ├── 0001-stack-tecnologico.md
 │   ├── 0002-arquitectura-hexagonal.md
@@ -39,16 +42,16 @@ docs/
 
 | # | Módulo | Estado | Rendimiento (stress test) |
 |---|--------|--------|--------------------------|
-| 1 | Autenticación y Usuarios | ✅ + Rate limiting + JWT seguro | 12 req/s (limitado) |
-| 2 | Catálogo de Productos | ✅ + Índices full-text + trigram + Imágenes (subida drag & drop, hasta 5 imágenes) | 37 req/s (100K prods) |
-| 3 | Inventario | ✅ + Índices optimizados | 98 req/s |
+| 1 | Autenticación y Usuarios | ✅ CRUD completo + Login JWT + Roles | IS-008: Crear/Editar/Eliminar/Toggle · Modal formulario · Filtros |
+| 2 | Catálogo de Productos | ✅ + Índices full-text + trigram + Imágenes (subida drag & drop, hasta 5 imágenes, máx 5MB) + Importar/Exportar (PDF/Excel/CSV) (IS-007) + Galería en detalle + Thumbnails | 37 req/s (100K prods) |
+| 3 | Inventario | ✅ + Índices optimizados + Exportación PDF/Excel/CSV en Resumen (IS-007) | 98 req/s |
 | 4 | Punto de Venta (POS) | ✅ Flujo completo + Ventas en espera | — |
 | 5 | Facturación | ✅ Facturas + Tickets + Descarga PDF/TXT | 1,280 req/s |
 | 6 | Medios de Pago | ✅ Configuración | — |
 | 7 | Proveedores y Órdenes | ✅ | — |
 | 8 | Dashboard | ✅ Datos reales + refetch 30s | 105 req/s |
-| 9 | Reportes | ✅ Ventas período + Inventario + Generales | 61 req/s (ventas 30d) |
-| 10 | Configuración | ✅ Notificaciones conectadas a API | 1,052 req/s |
+| 9 | Reportes | ✅ Ventas período + Inventario + Generales + Exportación PDF/Excel/CSV (IS-007) | 61 req/s (ventas 30d) |
+| 10 | Configuración | ✅ Notificaciones conectadas a API + Exportación Catálogos PDF/Excel/CSV (IS-007) | 1,052 req/s |
 
 ---
 

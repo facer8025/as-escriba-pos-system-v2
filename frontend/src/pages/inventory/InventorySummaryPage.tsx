@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useAuthStore } from '@/stores/authStore';
 import api from '@/services/api';
@@ -6,7 +6,9 @@ import { formatCurrency, cn } from '@/lib/utils';
 import {
   Package, AlertTriangle, TrendingUp, DollarSign,
   Search, ArrowUpDown, FileDown,
+  FileText, FileSpreadsheet, Download,
 } from 'lucide-react';
+import { exportToCsv, exportToExcel, exportToPdf, buildExportFilename } from '@/lib/exportUtils';
 import type { ApiResponse, Product, PageResponse } from '@/types';
 
 export default function InventorySummaryPage() {
@@ -14,6 +16,19 @@ export default function InventorySummaryPage() {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(0);
   const [stockFilter, setStockFilter] = useState('');
+  const [exportOpen, setExportOpen] = useState(false);
+  const exportRef = useRef<HTMLDivElement>(null);
+
+  // Close export dropdown on outside click
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (exportRef.current && !exportRef.current.contains(e.target as Node)) {
+        setExportOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const { data: productsData, isLoading } = useQuery({
     queryKey: ['inventory-products', user?.companyId, search, page, stockFilter],
@@ -102,7 +117,40 @@ export default function InventorySummaryPage() {
           <p className="text-surface-500 mt-1">Resumen de stock y movimientos</p>
         </div>
         <div className="flex items-center gap-3">
-          <button className="btn-secondary"><FileDown size={16} /> Exportar</button>
+          {/* Export dropdown */}
+          <div className="relative" ref={exportRef}>
+            <button
+              onClick={() => setExportOpen(!exportOpen)}
+              className="btn-secondary"
+            >
+              <FileDown size={16} /> Exportar
+            </button>
+            {exportOpen && (
+              <div className="absolute right-0 top-full mt-1 w-48 bg-white dark:bg-[#1e1e3a] border border-surface-200 dark:border-surface-700 rounded-xl shadow-soft z-50 py-1 animate-fade-in">
+                <button
+                  onClick={() => { handleExport('pdf'); setExportOpen(false); }}
+                  className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-surface-700 dark:text-surface-200 hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors"
+                >
+                  <FileText size={16} className="text-red-500" />
+                  <span>PDF</span>
+                </button>
+                <button
+                  onClick={() => { handleExport('excel'); setExportOpen(false); }}
+                  className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-surface-700 dark:text-surface-200 hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors"
+                >
+                  <FileSpreadsheet size={16} className="text-green-600" />
+                  <span>Excel</span>
+                </button>
+                <button
+                  onClick={() => { handleExport('csv'); setExportOpen(false); }}
+                  className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-surface-700 dark:text-surface-200 hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors"
+                >
+                  <Download size={16} className="text-blue-500" />
+                  <span>CSV</span>
+                </button>
+              </div>
+            )}
+          </div>
           <a href="/inventario/entradas/nueva" className="btn-primary"><Package size={16} /> Nueva entrada</a>
           <a href="/inventario/salidas/nueva" className="btn-secondary"><Package size={16} /> Nueva salida</a>
         </div>
@@ -205,4 +253,24 @@ export default function InventorySummaryPage() {
       )}
     </div>
   );
+
+  /** Export handlers */
+  function handleExport(format: 'pdf' | 'excel' | 'csv') {
+    const allProducts = filteredProducts.length > 0 ? filteredProducts : products;
+    if (allProducts.length === 0) return;
+
+    const filename = buildExportFilename('inventario-resumen');
+
+    switch (format) {
+      case 'csv':
+        exportToCsv(allProducts, filename);
+        break;
+      case 'excel':
+        exportToExcel(allProducts, filename);
+        break;
+      case 'pdf':
+        exportToPdf(allProducts, filename, user?.companyName || user?.fullName);
+        break;
+    }
+  }
 }

@@ -1,8 +1,8 @@
 # 📋 ESCRIBA POS — Especificación Funcional Actualizada
 
 > Basado en: `ESCRIBA_Especificacion_Funcional_MVP_MODULOS_1-10.md`
-> Versión del sistema: 2.0.0
-> Fecha de actualización: 2026-06-22
+> Versión del sistema: 2.1.0
+> Fecha de actualización: 2026-06-24
 
 ---
 
@@ -76,7 +76,7 @@ Los siguientes parámetros de IVA son configurables desde Configuración > Pará
 El formulario de productos incluye una pestaña **Imágenes** que permite:
 - **Subir imágenes** arrastrando archivos o haciendo clic en la zona de carga
 - **Formatos soportados**: JPG, JPEG, PNG, WEBP
-- **Tamaño máximo**: 200KB por imagen
+- **Tamaño máximo**: 5MB por imagen
 - **Cantidad máxima**: 5 imágenes por producto
 - **Imagen principal**: La primera imagen subida se marca como principal. Se puede cambiar desde la galería
 - **Previsualización**: Las imágenes se muestran en una cuadrícula antes de subirse
@@ -106,14 +106,56 @@ El formulario de productos incluye una pestaña **Imágenes** que permite:
 - **Nombres**: UUID único para evitar colisiones
 - **Limpieza**: Al eliminar una imagen, también se elimina el archivo del disco
 
+### Visualización de imágenes en listados y detalle
+
+El catálogo de productos y el detalle muestran las imágenes reales del producto:
+
+- **Vista tabla**: Muestra miniatura 40×40px con la imagen principal (`mainImageUrl`)
+- **Vista tarjetas**: Muestra la imagen ocupando el área superior de la tarjeta
+- **Detalle de producto**: 
+  - Imagen principal grande (192px) en la columna derecha
+  - Galería de thumbnails debajo de la imagen principal
+  - Modal de galería con navegación entre imágenes
+  - Si no hay imágenes, se muestra un placeholder con ícono de Package
+
+### Importación y Exportación de productos (Agregado a Módulo 2)
+
+#### Botón Importar
+Abre un modal **wizard de 3 pasos**:
+
+**Paso 1 — Descargar plantilla**
+- Botón `Descargar plantilla (.csv)` → descarga un archivo CSV con encabezados y ejemplo
+- Botón `Ya tengo la plantilla` → avanza al paso 2
+
+**Paso 2 — Cargar archivo**
+- Zona de drag & drop o click para explorar archivos
+- Formatos aceptados: CSV, XLSX
+- Tamaño máximo: 10MB · Máximo 5000 filas
+- Validación de formato al seleccionar el archivo
+- Botón `Validar y siguiente` → avanza al paso 3
+
+**Paso 3 — Validación y resultados**
+- Resumen visual: N productos válidos / N con errores / Total filas
+- Si hay errores, se muestran ejemplos de filas con problemas
+- Opción de importar solo los productos válidos
+- Botón `Importar N productos` → ejecuta la importación
+
+#### Botón Exportar
+- Descarga un archivo CSV con los productos visibles (aplicando filtros actuales)
+- Si el endpoint de exportación del backend no está disponible, genera el CSV desde el frontend
+- Nombre del archivo: `productos-{YYYY-MM-DD}.csv`
+
 ## Cambios respecto a la especificación original
 
 ### Módulo 2 — Productos
 - ✅ IVA configurable por producto (ya estaba en el schema original)
 - ✅ Badge de IVA en tabla y tarjetas (colores por tipo)
 - ✅ Seed data actualizado con IVA colombiano correcto
-- ✅ Subida y gestión de imágenes por producto (hasta 5 imágenes, drag & drop)
+- ✅ Subida y gestión de imágenes por producto (hasta 5 imágenes, drag & drop, máx 5MB)
 - ✅ Endpoints CRUD de productos (POST /products, PUT /products/{id}) — antes solo GET
+- ✅ Imágenes visibles en catálogo (tabla y grid), detalle y galería completa
+- ✅ Botón Importar con modal wizard de 3 pasos (descarga plantilla, carga archivo, validación)
+- ✅ Botón Exportar con descarga CSV (aplica filtros actuales)
 
 ### Módulo 4 — POS
 - ✅ Productos reales desde API (antes: mock data)

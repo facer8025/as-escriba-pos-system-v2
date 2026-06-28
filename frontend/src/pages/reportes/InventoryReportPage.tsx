@@ -1,13 +1,15 @@
 import { useNavigate } from 'react-router-dom';
+import { useState, useRef, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useAuthStore } from '@/stores/authStore';
 import api from '@/services/api';
 import { formatCurrency, formatDate, formatNumber } from '@/lib/utils';
 import {
   Package, AlertTriangle, TrendingUp, DollarSign,
-  ArrowLeft, FileDown, ClipboardList,
+  ArrowLeft, FileDown, FileText, FileSpreadsheet, Download, ClipboardList,
 } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
+import { exportInventoryReportToCsv, exportInventoryReportToExcel, exportInventoryReportToPdf, buildExportFilename } from '@/lib/exportUtils';
 import type { ApiResponse } from '@/types';
 
 const COLORS = ['#22c55e', '#f87171', '#fbbf24', '#818cf8', '#a78bfa', '#34d399'];
@@ -15,6 +17,19 @@ const COLORS = ['#22c55e', '#f87171', '#fbbf24', '#818cf8', '#a78bfa', '#34d399'
 export default function InventoryReportPage() {
   const navigate = useNavigate();
   const { user } = useAuthStore();
+  const [exportOpen, setExportOpen] = useState(false);
+  const exportRef = useRef<HTMLDivElement>(null);
+
+  // Close export dropdown on outside click
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (exportRef.current && !exportRef.current.contains(e.target as Node)) {
+        setExportOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const { data } = useQuery({
     queryKey: ['inventory-report', user?.companyId],
@@ -51,7 +66,39 @@ export default function InventoryReportPage() {
             <p className="text-surface-500 text-sm">Corte: {r.asOf ? formatDate(r.asOf, 'long') : '—'}</p>
           </div>
         </div>
-        <button className="btn-secondary"><FileDown size={16} /> Exportar Excel</button>
+        <div className="relative" ref={exportRef}>
+            <button
+              onClick={() => setExportOpen(!exportOpen)}
+              className="btn-secondary"
+            >
+              <FileDown size={16} /> Exportar
+            </button>
+            {exportOpen && (
+              <div className="absolute right-0 top-full mt-1 w-48 bg-white dark:bg-[#1e1e3a] border border-surface-200 dark:border-surface-700 rounded-xl shadow-soft z-50 py-1 animate-fade-in">
+                <button
+                  onClick={() => { handleExport('pdf'); setExportOpen(false); }}
+                  className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-surface-700 dark:text-surface-200 hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors"
+                >
+                  <FileText size={16} className="text-red-500" />
+                  <span>PDF</span>
+                </button>
+                <button
+                  onClick={() => { handleExport('excel'); setExportOpen(false); }}
+                  className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-surface-700 dark:text-surface-200 hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors"
+                >
+                  <FileSpreadsheet size={16} className="text-green-600" />
+                  <span>Excel</span>
+                </button>
+                <button
+                  onClick={() => { handleExport('csv'); setExportOpen(false); }}
+                  className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-surface-700 dark:text-surface-200 hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors"
+                >
+                  <Download size={16} className="text-blue-500" />
+                  <span>CSV</span>
+                </button>
+              </div>
+            )}
+          </div>
       </div>
 
       {/* Stats */}
@@ -106,4 +153,32 @@ export default function InventoryReportPage() {
       </div>
     </div>
   );
+
+  /** Export handlers */
+  function handleExport(format: 'pdf' | 'excel' | 'csv') {
+    const data = {
+      totalProducts: r.totalProducts || 0,
+      inStock: r.inStock || 0,
+      outOfStock: r.outOfStock || 0,
+      lowStockCount: r.lowStockCount || 0,
+      inventoryValue: r.inventoryValue || 0,
+      asOf: r.asOf ? formatDate(r.asOf, 'long') : new Date().toLocaleDateString('es-CO'),
+    };
+
+    if (data.totalProducts === 0) return;
+
+    const filename = buildExportFilename('reporte-inventario');
+
+    switch (format) {
+      case 'csv':
+        exportInventoryReportToCsv(data, filename);
+        break;
+      case 'excel':
+        exportInventoryReportToExcel(data, filename);
+        break;
+      case 'pdf':
+        exportInventoryReportToPdf(data, filename, user?.companyName || user?.fullName);
+        break;
+    }
+  }
 }

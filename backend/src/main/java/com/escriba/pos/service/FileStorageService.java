@@ -23,7 +23,7 @@ import java.util.UUID;
 public class FileStorageService {
 
     private static final Set<String> ALLOWED_EXTENSIONS = Set.of("jpg", "jpeg", "png", "webp");
-    private static final long MAX_FILE_SIZE = 200 * 1024; // 200KB
+    private static final long MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
     private final Path uploadDir;
 
@@ -52,7 +52,7 @@ public class FileStorageService {
 
         // Validar tamaño
         if (file.getSize() > MAX_FILE_SIZE) {
-            throw new BusinessException("El archivo excede el tamaño máximo de 200KB");
+            throw new BusinessException("El archivo excede el tamaño máximo de 5MB");
         }
 
         // Validar extensión

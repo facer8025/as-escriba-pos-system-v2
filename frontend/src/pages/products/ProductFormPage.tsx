@@ -108,7 +108,7 @@ export default function ProductFormPage() {
   }, [imagesData?.data?.data]);
 
   // Set form from loaded product
-  useState(() => {
+  useEffect(() => {
     if (productData?.data?.data) {
       const p = productData.data.data;
       setForm(prev => ({
@@ -124,7 +124,7 @@ export default function ProductFormPage() {
         weight: p.weight || 0, expirationControl: p.expirationControl || false,
       }));
     }
-  });
+  }, [productData?.data?.data]);
 
   // Load categories
   const { data: categoriesData } = useQuery({
@@ -163,10 +163,16 @@ export default function ProductFormPage() {
         ? api.put(`/products/${id}`, payload)
         : api.post('/products', payload);
     },
-    onSuccess: () => {
+    onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
-      toast.success(isEditing ? 'Producto actualizado' : 'Producto creado');
-      navigate('/productos');
+      if (!isEditing) {
+        const newProductId = response?.data?.data?.id;
+        toast.success('Producto creado. Ahora puedes agregar imágenes.');
+        navigate(newProductId ? `/productos/${newProductId}/editar` : '/productos');
+      } else {
+        toast.success('Producto actualizado');
+        navigate('/productos');
+      }
     },
     onError: () => toast.error('Error al guardar el producto'),
   });
@@ -193,6 +199,7 @@ export default function ProductFormPage() {
       }
       setNewImages(prev => prev.filter(ni => ni.file !== variables.file));
       setUploadingCount(prev => Math.max(0, prev - 1));
+      queryClient.invalidateQueries({ queryKey: ['products'] });
       toast.success('Imagen subida');
     },
     onError: () => {
@@ -205,6 +212,7 @@ export default function ProductFormPage() {
       api.delete(`/products/${id}/images/${imageId}`),
     onSuccess: (_data, imageId) => {
       setExistingImages(prev => prev.filter(img => img.id !== imageId));
+      queryClient.invalidateQueries({ queryKey: ['products'] });
       toast.success('Imagen eliminada');
     },
     onError: () => toast.error('Error al eliminar imagen'),
@@ -244,8 +252,8 @@ export default function ProductFormPage() {
         toast.error(`Formato no soportado: ${file.name}`);
         return false;
       }
-      if (file.size > 200 * 1024) {
-        toast.error(`Archivo muy grande: ${file.name} (máx 200KB)`);
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error(`Archivo muy grande: ${file.name} (máx 5MB)`);
         return false;
       }
       return true;
@@ -656,7 +664,7 @@ export default function ProductFormPage() {
                     </>
                   )}
                   <p className="text-xs">
-                    JPG, PNG, WEBP · Máx 200KB · {totalImages}/5 imágenes
+                    JPG, PNG, WEBP · Máx 5MB · {totalImages}/5 imágenes
                   </p>
                 </div>
               </div>

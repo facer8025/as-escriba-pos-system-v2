@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '@/stores/authStore';
 import api from '@/services/api';
@@ -7,7 +7,9 @@ import toast from 'react-hot-toast';
 import {
   BookOpen, Ruler, MapPin, Tag, Building2, AlertCircle,
   Plus, Pencil, Trash2, Save, X, Loader2, Check,
+  FileDown, FileText, FileSpreadsheet, Download,
 } from 'lucide-react';
+import { exportGenericCsv, exportGenericExcel, exportGenericPdf, buildExportFilename } from '@/lib/exportUtils';
 import type { ApiResponse } from '@/types';
 
 interface CatalogDef {
@@ -53,6 +55,19 @@ export default function CatalogsPage() {
   const [editingItem, setEditingItem] = useState<any | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [form, setForm] = useState<Record<string, string>>({});
+  const [exportOpen, setExportOpen] = useState(false);
+  const exportRef = useRef<HTMLDivElement>(null);
+
+  // Close export dropdown on outside click
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (exportRef.current && !exportRef.current.contains(e.target as Node)) {
+        setExportOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const catalog = CATALOGS.find(c => c.id === active)!;
 
@@ -133,9 +148,45 @@ export default function CatalogsPage() {
           <h3 className="font-semibold flex items-center gap-2 text-surface-900 dark:text-white">
             <catalog.icon size={18} /> {catalog.label}
           </h3>
-          <button onClick={startCreate} className="btn-primary text-xs py-1.5 px-3">
-            <Plus size={14} /> Nuevo
-          </button>
+          <div className="flex items-center gap-2">
+            {/* Export dropdown */}
+            <div className="relative" ref={exportRef}>
+              <button
+                onClick={() => setExportOpen(!exportOpen)}
+                className="btn-secondary text-xs py-1.5 px-3"
+              >
+                <FileDown size={14} /> Exportar
+              </button>
+              {exportOpen && (
+                <div className="absolute right-0 top-full mt-1 w-44 bg-white dark:bg-[#1e1e3a] border border-surface-200 dark:border-surface-700 rounded-xl shadow-soft z-50 py-1 animate-fade-in">
+                  <button
+                    onClick={() => { handleExport('pdf'); setExportOpen(false); }}
+                    className="w-full flex items-center gap-3 px-4 py-2 text-sm text-surface-700 dark:text-surface-200 hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors"
+                  >
+                    <FileText size={15} className="text-red-500" />
+                    <span>PDF</span>
+                  </button>
+                  <button
+                    onClick={() => { handleExport('excel'); setExportOpen(false); }}
+                    className="w-full flex items-center gap-3 px-4 py-2 text-sm text-surface-700 dark:text-surface-200 hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors"
+                  >
+                    <FileSpreadsheet size={15} className="text-green-600" />
+                    <span>Excel</span>
+                  </button>
+                  <button
+                    onClick={() => { handleExport('csv'); setExportOpen(false); }}
+                    className="w-full flex items-center gap-3 px-4 py-2 text-sm text-surface-700 dark:text-surface-200 hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors"
+                  >
+                    <Download size={15} className="text-blue-500" />
+                    <span>CSV</span>
+                  </button>
+                </div>
+              )}
+            </div>
+            <button onClick={startCreate} className="btn-primary text-xs py-1.5 px-3">
+              <Plus size={14} /> Nuevo
+            </button>
+          </div>
         </div>
 
         {/* Inline create/edit form */}
@@ -217,4 +268,55 @@ export default function CatalogsPage() {
       </div>
     </div>
   );
+
+  /** Export handlers */
+  function handleExport(format: 'pdf' | 'excel' | 'csv') {
+    if (items.length === 0) {
+      toast.error('No hay datos para exportar');
+      return;
+    }
+
+    const rows = items.map((item: any) => {
+      const row: Record<string, string | number> = {};
+      catalog.fields.forEach((f) => {
+        row[f.label] = item[f.key] || '—';
+      });
+      return row;
+    });
+
+    const filename = buildExportFilename(`catalogo-${catalog.id}`);
+
+    switch (format) {
+      case 'csv':
+        exportGenericCsv(rows, filename);
+        toast.success('Exportación completada');
+        break;
+      case 'excel': {
+        const colWidths = catalog.fields.map(() => ({ wch: 30 }));
+        exportGenericExcel(rows, filename, catalog.label, colWidths);
+        toast.success('Exportación completada');
+        break;
+      }
+      case 'pdf': {
+        const colDefs = catalog.fields.map((f) => ({
+          header: f.label,
+          dataKey: f.label,
+        }));
+        exportGenericPdf(rows, filename, {
+          title: `Catálogo: ${catalog.label}`,
+          companyName: user?.companyName || user?.fullName,
+          colDefs,
+          orientation: 'portrait',
+          summaryLines: [`Total registros: ${items.length}`],
+          footerText: 'ESCRIBA POS — Catálogo',
+          columnStyles: colDefs.reduce<Record<string, Partial<{ cellWidth: number; halign: 'left' | 'center' | 'right' | 'justify' }>>>((acc, _, i) => {
+            if (i >= 1) acc[String(i)] = { halign: 'center' };
+            return acc;
+          }, {}),
+        });
+        toast.success('Exportación completada');
+        break;
+      }
+    }
+  }
 }

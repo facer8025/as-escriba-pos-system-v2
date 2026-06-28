@@ -1,6 +1,6 @@
 # 📋 Backlog Maestro — ESCRIBA POS v2
 
-> **Total épicas:** 14 | **Completadas:** 8 | **En progreso:** 3 | **Pendientes:** 3
+> **Total épicas:** 14 | **Completadas:** 9 | **En progreso:** 2 | **Pendientes:** 3
 
 ---
 
@@ -37,6 +37,7 @@
 - [x] Cambio de contraseña
 - [x] LoginPage con UI empresarial
 - [x] UsersPage con tabla, roles, toggle estado
+- [x] UsersPage: CRUD completo (modal crear/editar · toggle activo · eliminar · filtros) (IS-008)
 - **Entregable:** AuthController, UserController, LoginPage, UsersPage
 
 ### EP-005: Módulo 2 — Catálogo de Productos
@@ -45,6 +46,7 @@
 - [x] Semáforo de stock (verde/amarillo/rojo)
 - [x] Vista tabla y vista tarjetas
 - [x] Paginación
+- [x] Exportar: menú dropdown PDF / Excel / CSV (IS-007)
 - **Entregable:** ProductController, ProductService, ProductsCatalogPage
 
 ### EP-006: Módulo 4 — Punto de Venta (POS)
@@ -84,7 +86,8 @@
 - [x] Órdenes de compra: Creación con búsqueda de proveedor y productos ✅
 - [x] Órdenes de compra: Recepción de mercancía con control de novedades ✅
 - [ ] Facturación: Facturas emitidas, detalle
-- [ ] Reportes: Ventas, Cierre de caja, Inventario, Compras
+- [x] Reportes: Ventas por período (con exportación PDF/Excel/CSV ✅ IS-007)
+- [x] Reporte Inventario (con exportación PDF/Excel/CSV ✅ IS-007)
 - [ ] Configuración: Empresa, Sucursales, Parámetros, Catálogos
 - **Estimado:** 8 issues verticales
 - **Prioridad:** Alta
@@ -126,9 +129,13 @@
 ## ⏳ Pendientes
 
 ### EP-013: Exportación PDF y Excel
-- [ ] Reportes en PDF (cierre de caja, facturas)
-- [ ] Exportación Excel (productos, ventas, inventario)
-- **Prioridad:** Baja
+- [x] Inventario Resumen: menú dropdown PDF / Excel / CSV (IS-007)
+- [x] Catálogo de Productos: menú dropdown PDF / Excel / CSV (IS-007)
+- [x] Reporte Ventas por período: menú dropdown PDF / Excel / CSV (IS-007)
+- [x] Reporte Inventario: menú dropdown PDF / Excel / CSV (IS-007)
+- [x] Configuración > Catálogos: menú dropdown PDF / Excel / CSV (IS-007)
+- [x] Refactor: exportUtils genérico para todos los módulos
+- **Prioridad:** Media
 
 ### EP-014: Pruebas automatizadas
 - [ ] Tests unitarios (JUnit 5 + Mockito)

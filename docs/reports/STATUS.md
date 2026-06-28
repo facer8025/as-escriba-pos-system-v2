@@ -1,8 +1,8 @@
 # 📊 Reporte de Estado — ESCRIBA POS v2
 
-> **Fecha:** 2026-06-23
+> **Fecha:** 2026-06-26
 > **Fase:** 3 — Implementación de Módulos (+ Corrección de bugs)
-> **Avance general:** ~65%
+> **Avance general:** ~72%
 
 ---
 
@@ -16,9 +16,52 @@ Adicionalmente, falta el **módulo de clientes** requerido para facturar con dat
 
 ## 2. Últimas implementaciones (Sprint actual)
 
+### ✅ Exportación Inventario Resumen — IS-007 (2026-06-26)
+- [x] Menú desplegable Exportar con 3 opciones: PDF, Excel, CSV
+- [x] PDF: landscape A4, encabezado + resumen + tabla zebra + pie numerado (jspdf + jspdf-autotable)
+- [x] Excel: hoja única con columnas ajustadas (xlsx)
+- [x] CSV: UTF-8 con BOM, compatibilidad Excel español
+- [x] Exportación 100% client-side, sin backend
+- [x] Respeta filtros de búsqueda y stock activos
+
+### ✅ Exportación Catálogo de Productos — IS-007 (2026-06-26)
+- [x] Menú desplegable Exportar con 3 opciones: PDF, Excel, CSV
+- [x] PDF: 10 columnas, resumen estadístico de catálogo
+- [x] Excel: 13 columnas con precios, IVA, estado
+- [x] CSV: mantiene intento backend API + fallback client-side
+- [x] Refactor: exportUtils genérico reutilizable (prepareInventoryRows / prepareCatalogRows)
+
+### ✅ Exportación Reportes — IS-007 (2026-06-26)
+- [x] Reporte Ventas: menú dropdown PDF / Excel / CSV
+  - [x] PDF: landscape, resumen + tabla ventas recientes
+  - [x] Excel: 2 hojas (Resumen + Ventas)
+  - [x] CSV: columnas Venta, Fecha, Cliente, Subtotal, IVA, Total
+- [x] Reporte Inventario: menú dropdown PDF / Excel / CSV
+  - [x] PDF: portrait, tabla de 5 métricas
+  - [x] Excel: hoja única con métricas
+  - [x] CSV: métricas exportables
+- [x] Configuración > Catálogos: nuevo botón Exportar PDF / Excel / CSV
+  - [x] Exporta datos del catálogo activo (Unidades, Marcas, Bancos)
+  - [x] Columnas dinámicas según campos del catálogo
+
+### ✅ Gestión de Usuarios CRUD — IS-008 (2026-06-26)
+- [x] Modal creación/edición con formulario (Nombres, Apellidos, Correo, Teléfono, Contraseña, Rol)
+- [x] Toggle de estado activo/inactivo funcional
+- [x] Eliminación con confirmación
+- [x] Filtros por búsqueda y rol
+- [x] Mutaciones con TanStack Query + invalidación de caché
+
 ### ✅ Tema oscuro — Visibilidad de fuentes (2026-06-23)
 - Corregidos 15+ archivos con `text-primary-600` sin variante `dark:`
 - Agregados `refetchInterval` a consultas de dashboard, productos y facturas
+
+### ✅ Correcciones recientes — Catálogo de Productos (2026-06-24)
+- [x] Botón Importar: modal wizard de 3 pasos (descargar plantilla, cargar archivo, validar)
+- [x] Botón Exportar: descarga CSV con filtros actuales
+- [x] Tamaño máximo de imágenes corregido: 200KB → 5MB (frontend y backend)
+- [x] Detalle de producto: galería de imágenes con modal de navegación
+- [x] Catálogo (tabla): thumbnails de imágenes en lugar de icono genérico
+- [x] Catálogo (grid): imágenes reales en tarjetas
 
 ### ⏳ Flujo de venta completo (IS-004) — Pendiente
 - [ ] Módulo de clientes (CRUD + búsqueda)
@@ -38,6 +81,10 @@ Adicionalmente, falta el **módulo de clientes** requerido para facturar con dat
 | BUG-003 | Sin selección de tipo de documento en el pago | 🟡 Alto | Abierto |
 | BUG-004 | Textos invisibles en tema oscuro | 🟡 Alto | ✅ Resuelto |
 | BUG-005 | Datos no se refrescan automáticamente | 🟡 Alto | ✅ Parcial |
+| BUG-006 | Botones Importar/Exportar sin funcionalidad | 🟡 Medio | ✅ Resuelto |
+| BUG-007 | Imágenes limitadas a 200KB (deberían ser 5MB) | 🟡 Medio | ✅ Resuelto |
+| BUG-008 | Imágenes no visibles en detalle de producto | 🟡 Medio | ✅ Resuelto |
+| BUG-009 | Imágenes no visibles en catálogo (tabla y grid) | 🟡 Medio | ✅ Resuelto |
 
 ---
 
@@ -45,16 +92,16 @@ Adicionalmente, falta el **módulo de clientes** requerido para facturar con dat
 
 | # | Módulo | Estado | Observaciones |
 |---|--------|--------|--------------|
-| 1 | Autenticación y Usuarios | ✅ Funcional | Login, roles, perfil |
-| 2 | Catálogo de Productos | ✅ Frontend | Stock no se actualiza post-venta (BUG-001) |
-| 3 | Inventario (Kardex) | ✅ Frontend | Movimientos manuales OK. Automáticos dependen de BUG-001 |
+| 1 | Autenticación y Usuarios | ✅ CRUD completo | IS-008: Crear/Editar (modal) · Toggle estado · Eliminar · Filtros |
+| 2 | Catálogo de Productos | ✅ Exportación PDF/Excel/CSV | IS-007: menú dropdown · PDF landscape · Excel · CSV (API+fallback) · 13 columnas |
+| 3 | Inventario | ✅ Exportación Resumen (PDF/Excel/CSV) | IS-007: Exportar con menú dropdown · PDF landscape · Excel · CSV · 10 columnas |
 | 4 | Punto de Venta (POS) | ⚠️ Parcial | Interfaz completa. Flujo de pago no persiste datos |
 | 5 | Facturación Electrónica DIAN | ❌ No funcional | Sin API de ventas no hay facturas que listar |
 | 6 | Medios de Pago | ✅ Configuración | Configuración OK. Integración con pago depende de BUG-001 |
 | 7 | Proveedores y Órdenes de Compra | ✅ Funcional | Flujo completo: crear, recibir, actualizar stock |
 | 8 | Dashboard | ⚠️ Parcial | Widgets visuales OK. Sin datos reales de ventas |
-| 9 | Reportes | 🔧 Placeholders | Pendiente implementación |
-| 10 | Configuración | ✅ Funcional | Empresa, usuarios, parámetros, catálogos |
+| 9 | Reportes | ✅ Exportación Ventas/Inventario (PDF/Excel/CSV) | IS-007: Ventas por período + Reporte inventario con dropdown export · PDF · Excel (multi-sheet) · CSV |
+| 10 | Configuración | ✅ Exportación Catálogos (PDF/Excel/CSV) | IS-007: Catálogos con botón Exportar · columnas dinámicas según tipo |
 
 ## 5. Métricas actualizadas
 
@@ -67,8 +114,10 @@ Backend:
   - ❌ Sin endpoints de clientes
 
 Frontend:
-  - 13 páginas implementadas (de 25+ rutas)
+  - 14 páginas implementadas (de 25+ rutas)
   - 1 página placeholder (traslados)
+  - 1 utilidad genérica: exportUtils.ts (Inventory + Catalog + SalesReport + InventoryReport)
+  - Dependencias: xlsx, jspdf, jspdf-autotable
   - ❌ Sin página de clientes
 
 Base de datos:
@@ -77,9 +126,10 @@ Base de datos:
   - ❌ Sin tabla de clientes (pendiente verificar schema)
 
 Issues:
-  - 4 issues registrados (IS-001 a IS-004)
-  - 3 completados (IS-001, IS-002, IS-003)
+  - 8 issues registrados (IS-001 a IS-008)
+  - 5 completados (IS-001, IS-002, IS-003, IS-007, IS-008)
   - 1 abierto (IS-004)
+  - 2 sin iniciar (IS-005, IS-006)
 
 Bugs:
   - 5 bugs registrados

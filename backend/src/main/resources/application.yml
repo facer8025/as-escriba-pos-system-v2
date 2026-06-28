@@ -91,7 +91,7 @@ app:
     api-base-url: https://api.factus.com.co
   upload:
     path: ${UPLOAD_PATH:./uploads}
-    max-file-size: 204800 # 200KB
+    max-file-size: 5242880 # 5MB
 
 # Logging
 logging:

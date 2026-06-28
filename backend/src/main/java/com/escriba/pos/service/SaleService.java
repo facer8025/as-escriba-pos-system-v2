@@ -29,6 +29,7 @@ public class SaleService {
     private final CashSessionRepository cashSessionRepository;
     private final PaymentMethodRepository paymentMethodRepository;
     private final InventoryMovementRepository movementRepository;
+    private final NotificationService notificationService;
 
     @Transactional
     public Sale createSale(CreateSaleRequest request) {
@@ -129,6 +130,9 @@ public class SaleService {
                 BigDecimal stockAfter = stockBefore.subtract(itemReq.getQuantity());
                 product.setCurrentStock(stockAfter);
                 productRepository.save(product);
+
+                // Notificar si el producto quedó sin stock o bajo mínimo
+                notificationService.checkAndNotifyStockAlerts(product, request.getCompanyId());
             }
         }
 

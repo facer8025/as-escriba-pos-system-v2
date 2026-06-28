@@ -1,14 +1,15 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useAuthStore } from '@/stores/authStore';
 import api from '@/services/api';
 import { formatCurrency, formatDate, formatNumber, cn } from '@/lib/utils';
 import {
   BarChart3, TrendingUp, DollarSign, ShoppingCart, Calendar,
-  Download, FileDown, ArrowLeft,
+  Download, FileDown, FileText, FileSpreadsheet, ArrowLeft,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
+import { exportSalesReportToCsv, exportSalesReportToExcel, exportSalesReportToPdf, buildExportFilename } from '@/lib/exportUtils';
 import type { ApiResponse } from '@/types';
 
 const RANGE_OPTIONS = [
@@ -25,6 +26,19 @@ export default function SalesReportPage() {
   const [range, setRange] = useState(30);
   const [customFrom, setCustomFrom] = useState('');
   const [customTo, setCustomTo] = useState('');
+  const [exportOpen, setExportOpen] = useState(false);
+  const exportRef = useRef<HTMLDivElement>(null);
+
+  // Close export dropdown on outside click
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (exportRef.current && !exportRef.current.contains(e.target as Node)) {
+        setExportOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const dateTo = new Date();
   const dateFrom = new Date();
@@ -58,7 +72,39 @@ export default function SalesReportPage() {
             </p>
           </div>
         </div>
-        <button className="btn-secondary"><FileDown size={16} /> Exportar Excel</button>
+        <div className="relative" ref={exportRef}>
+            <button
+              onClick={() => setExportOpen(!exportOpen)}
+              className="btn-secondary"
+            >
+              <FileDown size={16} /> Exportar
+            </button>
+            {exportOpen && (
+              <div className="absolute right-0 top-full mt-1 w-48 bg-white dark:bg-[#1e1e3a] border border-surface-200 dark:border-surface-700 rounded-xl shadow-soft z-50 py-1 animate-fade-in">
+                <button
+                  onClick={() => { handleExport('pdf'); setExportOpen(false); }}
+                  className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-surface-700 dark:text-surface-200 hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors"
+                >
+                  <FileText size={16} className="text-red-500" />
+                  <span>PDF</span>
+                </button>
+                <button
+                  onClick={() => { handleExport('excel'); setExportOpen(false); }}
+                  className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-surface-700 dark:text-surface-200 hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors"
+                >
+                  <FileSpreadsheet size={16} className="text-green-600" />
+                  <span>Excel</span>
+                </button>
+                <button
+                  onClick={() => { handleExport('csv'); setExportOpen(false); }}
+                  className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-surface-700 dark:text-surface-200 hover:bg-surface-50 dark:hover:bg-surface-800/50 transition-colors"
+                >
+                  <Download size={16} className="text-blue-500" />
+                  <span>CSV</span>
+                </button>
+              </div>
+            )}
+          </div>
       </div>
 
       {/* Range selector */}
@@ -164,4 +210,42 @@ export default function SalesReportPage() {
       </div>
     </div>
   );
+
+  /** Export handlers */
+  function handleExport(format: 'pdf' | 'excel' | 'csv') {
+    const sales: import('@/lib/exportUtils').SalesRow[] = (report?.recentSales || []).map((s: any) => ({
+      saleNumber: s.saleNumber || '',
+      date: formatDate(s.createdAt),
+      customer: s.customer?.name || 'CF',
+      subtotal: s.subtotal || 0,
+      taxTotal: s.taxTotal || 0,
+      total: s.total || 0,
+    }));
+
+    if (sales.length === 0) return;
+
+    const filename = buildExportFilename('reporte-ventas');
+    const summary = {
+      totalSales: report?.totalSales || 0,
+      totalTransactions: report?.totalTransactions || 0,
+      averageTicket: report?.averageTicket || 0,
+    };
+
+    switch (format) {
+      case 'csv':
+        exportSalesReportToCsv(sales, filename);
+        break;
+      case 'excel':
+        exportSalesReportToExcel(sales, filename, summary);
+        break;
+      case 'pdf':
+        exportSalesReportToPdf(sales, filename, {
+          ...summary,
+          dateFrom: fromStr,
+          dateTo: toStr,
+          companyName: user?.companyName || user?.fullName,
+        });
+        break;
+    }
+  }
 }

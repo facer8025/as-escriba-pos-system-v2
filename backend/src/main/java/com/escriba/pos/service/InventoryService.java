@@ -22,6 +22,7 @@ public class InventoryService {
     private final WarehouseRepository warehouseRepository;
     private final UserRepository userRepository;
     private final CompanyRepository companyRepository;
+    private final NotificationService notificationService;
 
     public List<InventoryMovement> getKardex(UUID productId, LocalDateTime from, LocalDateTime to) {
         return movementRepository.findByProductIdOrderByCreatedAtAsc(productId);
@@ -119,6 +120,9 @@ public class InventoryService {
                 .createdBy(user)
                 .build();
 
+        // Notificar si el stock quedó bajo o agotado
+        notificationService.checkAndNotifyStockAlerts(product, companyId);
+
         return movementRepository.save(movement);
     }
 
@@ -161,6 +165,9 @@ public class InventoryService {
                     .notes(notes)
                     .createdBy(user)
                     .build();
+
+            // Notificar si el ajuste dejó el stock bajo o agotado
+            notificationService.checkAndNotifyStockAlerts(product, companyId);
 
             return movementRepository.save(movement);
         }

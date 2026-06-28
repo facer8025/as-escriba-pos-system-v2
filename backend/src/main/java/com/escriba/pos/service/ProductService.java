@@ -39,6 +39,7 @@ public class ProductService {
     private final CategoryRepository categoryRepository;
     private final UnitRepository unitRepository;
     private final FileStorageService fileStorageService;
+    private final NotificationService notificationService;
 
     public Page<ProductResponse> getProducts(UUID companyId, String search, UUID categoryId,
                                               String status, int page, int size, String sortBy, String sortDir) {
@@ -168,6 +169,10 @@ public class ProductService {
         product.setAvgCost(BigDecimal.ZERO);
 
         Product saved = productRepository.save(product);
+
+        // Notificar si el producto se creó sin stock o por debajo del mínimo
+        notificationService.checkAndNotifyStockAlerts(saved, request.getCompanyId());
+
         return toProductResponse(saved);
     }
 
