@@ -102,7 +102,35 @@ npm run build → ✅ tsc + vite build OK
 
 ## 8. Pendiente
 
-- [ ] Tests de frontend del panel cliente (`frontend/`) — misma infraestructura
-- [ ] Tests unitarios para más servicios backend: InventoryService (kardex/costo promedio),
-      CashSessionService (cierre de caja), LicenseService (ciclo de vida licencias),
-      InvoiceService (facturación admin)
+- [x] ~~Tests de frontend del panel cliente (`frontend/`)~~ ✅ 21 tests (utils + authStore)
+- [x] ~~Tests unitarios para más servicios backend~~ ✅ InventoryService (10), CashSessionService (8),
+      LicenseService (7), InvoiceService (6)
+
+## 9. Ampliación de cobertura (2026-08-08)
+
+### Backend — 31 tests nuevos (63 total)
+| Suite | Tests | Cubre |
+|-------|-------|-------|
+| `InventoryServiceTest` | 10 | Kardex, costo promedio ponderado (stock 0 y existente), entradas/salidas, stock insuficiente, ajuste rápido (positivo/negativo), resumen |
+| `CashSessionServiceTest` | 8 | Apertura (con caja ocupada), cierre con cálculo de efectivo esperado y diferencia, resumen, sesión ya cerrada |
+| `LicenseServiceTest` | 7 | Creación con fechas calculadas, renovación (+1 mes + historial), cambio de plan, cambio de estado, validaciones |
+| `InvoiceServiceTest` | 6 | Cálculo IVA (19% y 0%), registro de pago → PAID, cartera vencida (filtro PENDING vencidas) |
+
+### Bug detectado y corregido 🔧
+**`License` tenía el mismo problema de initializers Lombok que `Plan`**: `licenseType`,
+`autoRenew`, `gracePeriodDays` y `discountPct` quedaban `null` al construir con el
+builder. Fix: `@Builder.Default` en los 4 campos.
+
+### Frontend panel cliente — 21 tests
+- Infraestructura Vitest 4 idéntica a frontend-admin (`vitest.config.ts`, setup, scripts)
+- `lib/utils.test.ts` (13): formatCurrency, formatDate (short/long/relative), formatNumber,
+  getStockStatus (semáforo), getInitials
+- `stores/authStore.test.ts` (8): setAuth, setTokens, updateUser, logout, persistencia localStorage
+
+### Verificación final
+```
+mvn test (backend)  → ✅ 63 tests, BUILD SUCCESS
+npm test (admin)    → ✅ 50 tests
+npm test (cliente)  → ✅ 21 tests
+npm run build       → ✅ ambos frontends
+```

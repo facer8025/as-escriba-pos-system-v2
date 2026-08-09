@@ -26,6 +26,7 @@ public class License {
     private Plan plan;
 
     @Column(name = "license_type", nullable = false, length = 10)
+    @Builder.Default
     private String licenseType = "PAID";
 
     @Column(nullable = false, length = 20)
@@ -39,15 +40,18 @@ public class License {
     private LocalDateTime expiresAt;
 
     @Column(name = "auto_renew")
+    @Builder.Default
     private Boolean autoRenew = true;
 
     @Column(name = "grace_period_days")
+    @Builder.Default
     private Integer gracePeriodDays = 7;
 
     @Column(name = "price_paid_monthly", precision = 18, scale = 2)
     private BigDecimal pricePaidMonthly;
 
     @Column(name = "discount_pct", precision = 5, scale = 2)
+    @Builder.Default
     private BigDecimal discountPct = BigDecimal.ZERO;
 
     @Column(name = "discount_reason", columnDefinition = "TEXT")

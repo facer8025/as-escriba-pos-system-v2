@@ -152,11 +152,11 @@
 - **Prioridad:** Media
 
 ### EP-014: Pruebas automatizadas
-- [x] Tests unitarios (JUnit 5 + Mockito) — SaleServiceTest (10), AuthServiceTest (14), PlanServiceTest (8) ✅
+- [x] Tests unitarios (JUnit 5 + Mockito) — 63 tests: SaleService (10), AuthService (14), InventoryService (10), CashSessionService (8), PlanService (8), LicenseService (7), InvoiceService (6) ✅
 - [x] Tests de integración (Testcontainers) — `EscribaPosApplicationIT` (PostgreSQL + Redis, requiere Docker con soporte bridge; se ejecuta con `mvn verify`) ✅
-- [x] Tests de frontend (Vitest) — frontend-admin: 50 tests (utils, Button, Badge/StatusBadge, Toggle, SearchInput, admin-auth-store) ✅
+- [x] Tests de frontend (Vitest) — frontend-admin: 50 tests · frontend cliente: 21 tests ✅
 - **Prioridad:** Media
-- **Avance:** 3/3 (32 tests backend + 50 tests frontend pasando)
+- **Avance:** 3/3 (134 tests: 63 backend + 50 admin + 21 cliente, todos pasando)
 
 ---
 
