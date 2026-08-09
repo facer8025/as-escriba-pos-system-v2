@@ -1,0 +1,222 @@
+@import "tailwindcss";
+
+@theme {
+  --color-escriba-50: #eef2ff;
+  --color-escriba-100: #e0e7ff;
+  --color-escriba-200: #c7d2fe;
+  --color-escriba-300: #a5b4fc;
+  --color-escriba-400: #818cf8;
+  --color-escriba-500: #6366f1;
+  --color-escriba-600: #4f46e5;
+  --color-escriba-700: #4338ca;
+  --color-escriba-800: #3730a3;
+  --color-escriba-900: #312e81;
+
+  --color-success-50: #f0fdf4;
+  --color-success-500: #22c55e;
+  --color-success-600: #16a34a;
+
+  --color-warning-50: #fffbeb;
+  --color-warning-500: #f59e0b;
+  --color-warning-600: #d97706;
+
+  --color-danger-50: #fef2f2;
+  --color-danger-500: #ef4444;
+  --color-danger-600: #dc2626;
+
+  --color-info-50: #eff6ff;
+  --color-info-500: #3b82f6;
+  --color-info-600: #2563eb;
+
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+/* ================================================================ */
+/* Componentes UI — usando @apply con utilities de Tailwind v4       */
+/* ================================================================ */
+
+.card {
+  @apply bg-white dark:bg-neutral-900 rounded-xl shadow-sm
+         border border-neutral-200 dark:border-neutral-800
+         transition-all duration-200;
+}
+
+/* Botones */
+.btn {
+  @apply inline-flex items-center justify-center gap-2 px-4 py-2.5
+         text-sm font-medium rounded-xl
+         transition-all duration-200
+         focus:outline-none focus:ring-2 focus:ring-offset-2
+         disabled:opacity-50 disabled:cursor-not-allowed
+         active:scale-[0.98];
+}
+
+.btn-primary {
+  @apply inline-flex items-center justify-center gap-2 px-4 py-2.5
+         text-sm font-medium rounded-xl
+         transition-all duration-200
+         focus:outline-none focus:ring-2 focus:ring-offset-2
+         disabled:opacity-50 disabled:cursor-not-allowed
+         active:scale-[0.98]
+         bg-escriba-600 text-white hover:bg-escriba-700
+         focus:ring-escriba-500 shadow-sm;
+}
+
+.btn-secondary {
+  @apply inline-flex items-center justify-center gap-2 px-4 py-2.5
+         text-sm font-medium rounded-xl
+         transition-all duration-200
+         focus:outline-none focus:ring-2 focus:ring-offset-2
+         disabled:opacity-50 disabled:cursor-not-allowed
+         active:scale-[0.98]
+         bg-white dark:bg-neutral-800 text-neutral-700 dark:text-neutral-200
+         border border-neutral-200 dark:border-neutral-700
+         hover:bg-neutral-50 dark:hover:bg-neutral-700
+         focus:ring-neutral-400;
+}
+
+.btn-danger {
+  @apply inline-flex items-center justify-center gap-2 px-4 py-2.5
+         text-sm font-medium rounded-xl
+         transition-all duration-200
+         focus:outline-none focus:ring-2 focus:ring-offset-2
+         disabled:opacity-50 disabled:cursor-not-allowed
+         active:scale-[0.98]
+         bg-danger-600 text-white hover:bg-red-700
+         focus:ring-danger-500 shadow-sm;
+}
+
+.btn-ghost {
+  @apply inline-flex items-center justify-center gap-2 px-4 py-2.5
+         text-sm font-medium rounded-xl
+         transition-all duration-200
+         focus:outline-none focus:ring-2 focus:ring-offset-2
+         disabled:opacity-50 disabled:cursor-not-allowed
+         active:scale-[0.98]
+         text-neutral-600 dark:text-neutral-400
+         hover:bg-neutral-100 dark:hover:bg-neutral-800
+         focus:ring-neutral-400;
+}
+
+/* Inputs */
+.input {
+  @apply w-full px-3.5 py-2.5 text-sm rounded-xl
+         bg-white dark:bg-neutral-800
+         border border-neutral-200 dark:border-neutral-700
+         text-neutral-800 dark:text-neutral-100
+         placeholder:text-neutral-400 dark:placeholder:text-neutral-500
+         focus:outline-none focus:ring-2 focus:ring-escriba-500 focus:border-transparent
+         transition-all duration-200;
+}
+
+.input-error {
+  @apply w-full px-3.5 py-2.5 text-sm rounded-xl
+         bg-white dark:bg-neutral-800
+         border border-danger-500
+         text-neutral-800 dark:text-neutral-100
+         placeholder:text-neutral-400 dark:placeholder:text-neutral-500
+         focus:outline-none focus:ring-2 focus:ring-danger-500 focus:border-transparent
+         transition-all duration-200;
+}
+
+.label {
+  @apply block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1.5;
+}
+
+/* Badges */
+.badge {
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full
+         text-xs font-medium;
+}
+
+.badge-success {
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full
+         text-xs font-medium
+         bg-success-50 text-success-600 dark:bg-green-900/30 dark:text-green-400;
+}
+
+.badge-warning {
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full
+         text-xs font-medium
+         bg-warning-50 text-warning-600 dark:bg-amber-900/30 dark:text-amber-400;
+}
+
+.badge-danger {
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full
+         text-xs font-medium
+         bg-danger-50 text-danger-600 dark:bg-red-900/30 dark:text-red-400;
+}
+
+.badge-info {
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full
+         text-xs font-medium
+         bg-info-50 text-info-600 dark:bg-blue-900/30 dark:text-blue-400;
+}
+
+.badge-neutral {
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full
+         text-xs font-medium
+         bg-neutral-100 text-neutral-600 dark:bg-neutral-700 dark:text-neutral-300;
+}
+
+/* Modal */
+.modal-overlay {
+  @apply fixed inset-0 z-50 flex items-center justify-center
+         bg-black/50 backdrop-blur-sm;
+}
+
+.modal-content {
+  @apply bg-white dark:bg-neutral-900 rounded-2xl shadow-xl
+         border border-neutral-200 dark:border-neutral-800
+         max-h-[90vh] overflow-y-auto;
+}
+
+/* Skeleton loading */
+.skeleton {
+  @apply bg-neutral-200/50 dark:bg-neutral-700 rounded animate-pulse;
+}
+
+/* Animaciones */
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out;
+}
+.animate-scale-in {
+  animation: scale-in 0.2s ease-out;
+}
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ================================================================ */
+/* Admin badge colors                                               */
+/* ================================================================ */
+
+.admin-badge-sa {
+  @apply bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400;
+}
+.admin-badge-ac {
+  @apply bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400;
+}
+.admin-badge-af {
+  @apply bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400;
+}
+.admin-badge-st {
+  @apply bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400;
+}
+.admin-badge-au {
+  @apply bg-slate-100 text-slate-700 dark:bg-slate-900/30 dark:text-slate-400;
+}

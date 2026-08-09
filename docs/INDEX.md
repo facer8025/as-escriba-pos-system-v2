@@ -1,9 +1,10 @@
 # 📋 ESCRIBA POS — Centro de Documentación y Seguimiento
 
 > **Proyecto:** `as-escriba-pos-system-v2`
-> **Última actualización:** 2026-06-24
+> **Última actualización:** 2026-06-27
 > **Estado general:** 🟢 Rendimiento optimizado — Stress test superado (100K productos, 50K ventas)
 > **Últimas correcciones:** ✅ Importar/Exportar funcional · ✅ Imágenes 5MB · ✅ Galería en detalle · ✅ Thumbnails en catálogo
+> **Nuevo: Módulo Administrativo Global** 📋 Panel SuperAdmin para gestión interna del SaaS (admin.escriba.co)
 
 ---
 
@@ -28,6 +29,9 @@ docs/
 │   ├── 0002-arquitectura-hexagonal.md
 │   ├── 0003-arquitectura-frontend.md
 │   └── 0004-modelo-tributario-colombia.md
+├── admin/
+│   ├── ARQUITECTURA-MODULO-ADMIN.md   ← Arquitectura del panel administrativo global
+│   └── ROADMAP.md                     ← Plan detallado de implementación (60 días / 8 sprints)
 └── reports/
     ├── STATUS.md                    ← Reporte de estado general
     ├── IMPLEMENTACION-IS-001.md     ← Inventario (entradas, salidas, ajustes)
@@ -113,14 +117,44 @@ docs/
 
 ---
 
+## 🚀 Nuevo: Módulo Administrativo Global (admin.escriba.co)
+
+Panel SuperAdmin para gestión interna del SaaS ESCRIBA. Completamente independiente del panel de clientes.
+
+| Módulo | Estado | Documentación |
+|--------|--------|---------------|
+| Dashboard global | ✅ CRUD backend + Frontend con mock data | [Arquitectura](./admin/ARQUITECTURA-MODULO-ADMIN.md) |
+| Gestión de empresas | ✅ CRUD backend + Frontend completo | [Roadmap](./admin/ROADMAP.md) |
+| Planes y precios | ✅ CRUD backend + Frontend | Schema BD: `V5__admin_schema.sql` |
+| Licencias | ✅ CRUD backend + Frontend | — |
+| Facturación y cobros | ✅ Backend + Frontend placeholder | — |
+| Módulos y feature flags | ✅ Backend + Frontend | — |
+| Usuarios administradores | ✅ Backend + Frontend | — |
+| Soporte y tickets | ✅ Backend + Frontend | — |
+| Comunicaciones | ✅ Backend + Frontend placeholder | — |
+| Monitoreo del sistema | ✅ Backend + Frontend | — |
+| Auditoría global | ✅ Backend + Frontend | — |
+| Configuración global | ✅ Backend + Frontend | — |
+
+**Avance general:** Fase 1 (Sprint 1-2) completa ✅ · 12 submódulos con backend y frontend base · Pendiente: integración de datos reales en frontend y lógica de negocio avanzada (Fase 2-4)
+
+**Stack:** React 19 + Vite 6 + Spring Boot 3.4 + PostgreSQL 16 (schema: `public`)
+**Separación:** Dominio `admin.escriba.co` · Contenedor Docker independiente · JWT RS256 separado
+
+---
+
 ## 🔗 Enlaces rápidos
 
 | Recurso | Ruta |
 |---------|------|
 | README del proyecto | `../README.md` |
 | Contexto de dominio | `../CONTEXT.md` |
+| Arquitectura módulo admin | `./admin/ARQUITECTURA-MODULO-ADMIN.md` |
+| Roadmap admin | `./admin/ROADMAP.md` |
+| Schema BD admin | `../database/init/02-admin-schema.sql` |
 | Código backend | `../backend/src/` |
-| Código frontend | `../frontend/src/` |
+| Código frontend cliente | `../frontend/src/` |
+| Código frontend admin | `../frontend-admin/src/` |
 | Infraestructura | `../docker-compose.yml` |
 | Seed datos stress | `../database/seed/stress-test-data-10x.sh` |
 | Stress test | `../database/seed/stress-test.mjs` |

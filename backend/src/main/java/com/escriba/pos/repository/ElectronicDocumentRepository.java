@@ -19,4 +19,6 @@ public interface ElectronicDocumentRepository extends JpaRepository<ElectronicDo
     Page<ElectronicDocument> findByFilters(@Param("companyId") UUID companyId,
                                            @Param("status") String status,
                                            Pageable pageable);
+
+    long countByDianStatus(String dianStatus);
 }

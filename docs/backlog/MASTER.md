@@ -1,6 +1,6 @@
 # 📋 Backlog Maestro — ESCRIBA POS v2
 
-> **Total épicas:** 14 | **Completadas:** 9 | **En progreso:** 2 | **Pendientes:** 3
+> **Total épicas:** 15 | **Completadas:** 11 | **En progreso:** 1 | **Pendientes:** 3
 
 ---
 
@@ -72,9 +72,23 @@
 - [x] Placeholders para páginas pendientes
 - **Entregable:** App.tsx con routing completo, MainLayout, Sidebar
 
+### EP-015: Módulo Administrativo Global — Fundación ✅
+- [x] ADM-001: Schema de BD admin (25 tablas + seed data) ✅
+- [x] ADM-004: Migración Flyway V5 (incluido en ADM-001)
+- [x] ADM-006: Seed data inicial (roles, módulos, config)
+- [x] ADM-002: Módulo Spring Boot admin/ ✅
+- [x] ADM-003: JPA entities schema public (11 entities) ✅
+- [x] ADM-005: Repositorios JPA admin (11 repos) ✅
+- [x] ADM-007: Auth admin (login + TOTP + JWT) ✅
+- [x] ADM-008: JWT RS256 separado ✅
+- [x] ADM-009: Rate limiting + bloqueo ✅
+- [x] ADM-010~015: Frontend-admin completo (scaffolding, UI, layout, login, guards, stores) ✅
+- **Documentación:** `docs/admin/ARQUITECTURA-MODULO-ADMIN.md`, `docs/admin/ROADMAP.md`
+- **Entregable:** Fase 1 completa (Sprint 1 + Sprint 2)
+
 ---
 
-## 🔧 En progreso
+## 🔧 Pendientes (Fase 2-4)
 
 ### EP-009: Frontend placeholders → implementación completa
 - [x] Inventario: Resumen con tarjetas y tabla ✅

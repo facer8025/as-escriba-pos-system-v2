@@ -91,6 +91,24 @@ services:
     restart: unless-stopped
 
   # ============================================================
+  # React Frontend - Panel Admin (admin.escriba.co)
+  # ============================================================
+  frontend-admin:
+    build:
+      context: ./frontend-admin
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: ${VITE_ADMIN_API_URL:-/api/v1}
+    container_name: escriba-admin-frontend
+    ports:
+      - "3001:80"
+    depends_on:
+      - backend
+    networks:
+      - escriba-network
+    restart: unless-stopped
+
+  # ============================================================
   # Adminer - Gestión visual de BD (solo dev)
   # ============================================================
   adminer:

@@ -33,9 +33,11 @@ public class RateLimitingFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
-        // Solo aplicar a POST /auth/login
+        // Aplicar a endpoints de login (POS y Admin)
         String path = request.getRequestURI();
-        if ("POST".equalsIgnoreCase(request.getMethod()) && path.endsWith("/auth/login")) {
+        boolean isLoginEndpoint = "POST".equalsIgnoreCase(request.getMethod()) &&
+                (path.endsWith("/auth/login") || path.endsWith("/admin/auth/login"));
+        if (isLoginEndpoint) {
 
             String clientIp = getClientIp(request);
             long now = System.currentTimeMillis();

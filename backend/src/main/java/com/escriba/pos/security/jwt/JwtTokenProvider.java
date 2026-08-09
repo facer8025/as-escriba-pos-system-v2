@@ -19,18 +19,21 @@ public class JwtTokenProvider {
     private final long expirationMs;
     private final long refreshExpirationMs;
 
+    // Tamaño mínimo seguro: jjwt 0.12+ requiere 384 bits (48 bytes) para HS384
+    private static final int MIN_KEY_BYTES = 48;
+
     public JwtTokenProvider(
             @Value("${app.jwt.secret}") String secret,
             @Value("${app.jwt.expiration-ms}") long expirationMs,
             @Value("${app.jwt.refresh-expiration-ms}") long refreshExpirationMs) {
 
-        // Validar que la clave tenga al menos 256 bits (32 bytes) para HS256
         byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
-        if (keyBytes.length < 32) {
-            log.warn("JWT secret tiene menos de 256 bits. Usando clave derivada. " +
-                     "Recomendacion: usar una clave de al menos 32 caracteres.");
-            byte[] paddedKey = new byte[32];
-            System.arraycopy(keyBytes, 0, paddedKey, 0, Math.min(keyBytes.length, 32));
+        if (keyBytes.length < MIN_KEY_BYTES) {
+            log.warn("JWT secret tiene {} bits. Se requieren al menos {} bits ({} bytes) para HS384. " +
+                     "Usando clave derivada. Recomendación: usar una clave de al menos {} caracteres.",
+                    keyBytes.length * 8, MIN_KEY_BYTES * 8, MIN_KEY_BYTES, MIN_KEY_BYTES);
+            byte[] paddedKey = new byte[MIN_KEY_BYTES];
+            System.arraycopy(keyBytes, 0, paddedKey, 0, Math.min(keyBytes.length, MIN_KEY_BYTES));
             this.secretKey = Keys.hmacShaKeyFor(paddedKey);
         } else {
             this.secretKey = Keys.hmacShaKeyFor(keyBytes);

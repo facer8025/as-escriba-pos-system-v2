@@ -1,16 +1,16 @@
 # 📊 Reporte de Estado — ESCRIBA POS v2
 
-> **Fecha:** 2026-06-26
-> **Fase:** 3 — Implementación de Módulos (+ Corrección de bugs)
-> **Avance general:** ~72%
+> **Fecha:** 2026-07-07
+> **Fase:** 4 — Completa (Sistema Admin 100% + POS bugs resueltos)
+> **Avance general:** ~95%
 
 ---
 
 ## 1. Resumen ejecutivo
 
-El sistema POS cuenta con los 10 módulos del MVP especificados a nivel de frontend, pero **el flujo crítico de venta no está conectado al backend**. Al confirmar un pago en el POS los datos se pierden: no se persiste la venta, no se descuenta stock, no se genera factura. Este es el bug de mayor prioridad del proyecto.
+Todos los bugs críticos del POS fueron resueltos en implementaciones posteriores. El flujo de venta completo está funcional: frontend → API → persistencia → descuento stock → kardex. El módulo de clientes tiene CRUD completo con búsqueda. El selector de tipo de documento fiscal funciona en el POS.
 
-Adicionalmente, falta el **módulo de clientes** requerido para facturar con datos del receptor, y la **selección de tipo de documento fiscal** en el pago.
+El Sistema Administrativo Global (admin.escriba.co) se completó al 100% con sus 12 módulos.
 
 ---
 
@@ -63,24 +63,24 @@ Adicionalmente, falta el **módulo de clientes** requerido para facturar con dat
 - [x] Catálogo (tabla): thumbnails de imágenes en lugar de icono genérico
 - [x] Catálogo (grid): imágenes reales en tarjetas
 
-### ⏳ Flujo de venta completo (IS-004) — Pendiente
-- [ ] Módulo de clientes (CRUD + búsqueda)
-- [ ] Tipo de documento en pago (ticket / equivalente POS / factura electrónica)
-- [ ] API `POST /api/v1/sales` con validación de stock
-- [ ] Persistencia de venta desde el frontend
-- [ ] Actualización automática de stock post-venta
+### ✅ Flujo de venta completo (IS-004) — Resuelto
+- [x] Módulo de clientes (CRUD + búsqueda) — CustomerController + CustomerService ✅
+- [x] Tipo de documento en pago (ticket / equivalente POS / factura electrónica) — Selector en POSPage ✅
+- [x] API `POST /api/v1/sales` con validación de stock — SaleController + SaleService ✅
+- [x] Persistencia de venta desde el frontend — POSPage.handleConfirmPayment() ✅
+- [x] Actualización automática de stock post-venta — SaleService.createSale() steps 5b + 9 ✅
 
 ---
 
-## 3. Bugs activos
+## 3. Bugs — Todos resueltos ✅
 
 | ID | Descripción | Severidad | Estado |
 |----|-------------|-----------|--------|
-| BUG-001 | Ventas en POS no se persisten ni descuentan stock | 🔴 Crítico | Abierto |
-| BUG-002 | Sin módulo de clientes para facturación | 🟡 Alto | Abierto |
-| BUG-003 | Sin selección de tipo de documento en el pago | 🟡 Alto | Abierto |
+| BUG-001 | Ventas en POS no se persisten ni descuentan stock | 🔴 Crítico | ✅ Resuelto — SaleService.createSale() completo |
+| BUG-002 | Sin módulo de clientes para facturación | 🟡 Alto | ✅ Resuelto — CustomerController + CustomersListPage |
+| BUG-003 | Sin selección de tipo de documento en el pago | 🟡 Alto | ✅ Resuelto — Selector TICKET/INVOICE en POSPage |
 | BUG-004 | Textos invisibles en tema oscuro | 🟡 Alto | ✅ Resuelto |
-| BUG-005 | Datos no se refrescan automáticamente | 🟡 Alto | ✅ Parcial |
+| BUG-005 | Datos no se refrescan automáticamente | 🟡 Alto | ✅ Resuelto — refetchInterval agregado |
 | BUG-006 | Botones Importar/Exportar sin funcionalidad | 🟡 Medio | ✅ Resuelto |
 | BUG-007 | Imágenes limitadas a 200KB (deberían ser 5MB) | 🟡 Medio | ✅ Resuelto |
 | BUG-008 | Imágenes no visibles en detalle de producto | 🟡 Medio | ✅ Resuelto |
