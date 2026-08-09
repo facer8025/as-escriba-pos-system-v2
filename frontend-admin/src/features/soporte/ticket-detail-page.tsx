@@ -7,7 +7,7 @@ import {
   MessageSquare, Paperclip,
 } from 'lucide-react'
 import { api } from '@/lib/api'
-import type { SupportTicket, TicketMessage } from '@/types/admin'
+import type { SupportTicket, TicketMessage, TicketStatus } from '@/types/admin'
 import { Modal } from '@/components/ui/modal'
 
 const PRIORITY_COLORS: Record<string, string> = {
@@ -327,7 +327,7 @@ function ManageTicketModal({ isOpen, onClose, ticket, adminUsers, onStatusChange
           <div className="grid grid-cols-2 gap-2">
             {Object.entries(STATUS_LABELS).map(([value, label]) => (
               <button key={value}
-                onClick={() => { setSelectedStatus(value); onStatusChange(value) }}
+                onClick={() => { setSelectedStatus(value as TicketStatus); onStatusChange(value) }}
                 className={`p-2.5 rounded-xl text-sm font-medium border transition-all cursor-pointer ${
                   selectedStatus === value
                     ? 'bg-escriba-50 border-escriba-300 text-escriba-700'

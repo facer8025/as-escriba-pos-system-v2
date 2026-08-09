@@ -18,6 +18,7 @@ public class AdminUserResponse {
     private String roleName;
     private String phone;
     private String position;
+    private String avatarUrl;
     private String status;
     private Boolean totpEnabled;
     private LocalDateTime lastLoginAt;

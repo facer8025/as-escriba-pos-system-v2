@@ -11,6 +11,7 @@ public class CreatePlanRequest {
     private String descriptionLong;
     @NotNull @DecimalMin("0") private BigDecimal priceMonthly;
     @NotNull @DecimalMin("0") private BigDecimal priceAnnual;
+    private BigDecimal taxRate;
     private String badgeColor = "#4f46e5";
     private boolean isFeatured;
     private boolean isVisibleWeb = true;

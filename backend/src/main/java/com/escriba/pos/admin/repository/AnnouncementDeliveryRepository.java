@@ -10,6 +10,7 @@ import java.util.UUID;
 @Repository
 public interface AnnouncementDeliveryRepository extends JpaRepository<AnnouncementDelivery, UUID> {
     List<AnnouncementDelivery> findByAnnouncementId(UUID announcementId);
+    long countByAnnouncementId(UUID announcementId);
     List<AnnouncementDelivery> findByTenantId(UUID tenantId);
     Optional<AnnouncementDelivery> findByAnnouncementIdAndTenantIdAndChannel(
             UUID announcementId, UUID tenantId, String channel);

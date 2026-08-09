@@ -7,6 +7,7 @@ import com.escriba.pos.admin.model.entity.MaintenanceWindow;
 import com.escriba.pos.admin.model.entity.PaymentGateway;
 import com.escriba.pos.admin.model.entity.SystemConfig;
 import com.escriba.pos.admin.repository.DianProviderRepository;
+import com.escriba.pos.admin.repository.MaintenanceWindowRepository;
 import com.escriba.pos.admin.repository.PaymentGatewayRepository;
 import com.escriba.pos.admin.repository.SystemConfigRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -85,7 +87,7 @@ public class SystemConfigService {
     }
 
     @Transactional
-    public void cancelMaintenanceWindow(Long id) {
+    public void cancelMaintenanceWindow(UUID id) {
         maintenanceWindowRepository.findById(id).ifPresent(w -> {
             w.setStatus("CANCELLED");
             maintenanceWindowRepository.save(w);

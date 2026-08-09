@@ -5,12 +5,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
 @Data @NoArgsConstructor @AllArgsConstructor @Builder
-public class MonitoringResponse {
-    private List<ServiceHealthDTO> services;
-    private SystemMetricsDTO metrics;
-    private List<String> recentErrors;
+public class DianProviderDTO {
+    private Integer id;
+    private String name;
+    private String apiUrl;
+    private String authType;
+    private Boolean active;
 }

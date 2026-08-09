@@ -95,7 +95,7 @@ export function TicketsListPage() {
     { label: 'Sin SLA', hasSla: true },
   ]
 
-  const timeAgo = (dateStr: string) => {
+  const timeAgo = (dateStr: string | Date) => {
     const diff = Date.now() - new Date(dateStr).getTime()
     const mins = Math.floor(diff / 60000)
     if (mins < 60) return `${mins}m`
@@ -261,7 +261,7 @@ export function TicketsListPage() {
                           <div className="flex items-center gap-1">
                             <Clock className={`w-3 h-3 ${slaUrgent ? 'text-danger-500' : 'text-neutral-400'}`} />
                             <span className={`text-xs ${slaUrgent ? 'text-danger-600 font-medium' : 'text-neutral-400'}`}>
-                              {timeAgo(ticket.slaDeadline)}
+                              {timeAgo(slaDeadline)}
                             </span>
                           </div>
                         ) : (

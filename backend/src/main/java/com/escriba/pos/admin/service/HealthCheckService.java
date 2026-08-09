@@ -57,12 +57,12 @@ public class HealthCheckService {
             jdbc.queryForObject("SELECT 1", Integer.class);
             long ms = System.currentTimeMillis() - start;
 
-            ServiceHealthLog log = saveHealthLog("PostgreSQL", "UP", (int) ms, null);
+            ServiceHealthLog healthLog = saveHealthLog("PostgreSQL", "UP", (int) ms, null);
             if (!"UP".equals(lastDbStatus)) {
                 log.warn("PostgreSQL recuperado — estado UP");
             }
             lastDbStatus = "UP";
-            return log;
+            return healthLog;
         } catch (Exception e) {
             long ms = System.currentTimeMillis() - start;
             log.error("Health check DB falló: {}", e.getMessage());
@@ -88,12 +88,12 @@ public class HealthCheckService {
                 socket.connect(new java.net.InetSocketAddress(host, port), 5000);
                 long ms = System.currentTimeMillis() - start;
 
-                ServiceHealthLog log = saveHealthLog("Email SMTP", "UP", (int) ms, null);
+                ServiceHealthLog healthLog = saveHealthLog("Email SMTP", "UP", (int) ms, null);
                 if (!"UP".equals(lastMailStatus)) {
                     log.warn("SMTP recuperado — estado UP");
                 }
                 lastMailStatus = "UP";
-                return log;
+                return healthLog;
             }
         } catch (Exception e) {
             long ms = System.currentTimeMillis() - start;
@@ -118,13 +118,13 @@ public class HealthCheckService {
             long ms = System.currentTimeMillis() - start;
 
             String status = (code == 200) ? "UP" : "DEGRADED";
-            ServiceHealthLog log = saveHealthLog("API REST", status, (int) ms,
+            ServiceHealthLog healthLog = saveHealthLog("API REST", status, (int) ms,
                     code != 200 ? "HTTP " + code : null);
             if (!"UP".equals(lastApiStatus) && "UP".equals(status)) {
                 log.warn("API REST recuperada — estado UP");
             }
             lastApiStatus = status;
-            return log;
+            return healthLog;
         } catch (Exception e) {
             long ms = System.currentTimeMillis() - start;
             log.error("Health check API falló: {}", e.getMessage());

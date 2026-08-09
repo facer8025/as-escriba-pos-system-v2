@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/admin/config")
@@ -70,7 +71,7 @@ public class SystemConfigController {
     }
 
     @PostMapping("/maintenance-windows/{id}/cancel")
-    public ResponseEntity<ApiResponse<Void>> cancelMaintenanceWindow(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> cancelMaintenanceWindow(@PathVariable UUID id) {
         systemConfigService.cancelMaintenanceWindow(id);
         return ResponseEntity.ok(ApiResponse.success("Ventana de mantenimiento cancelada", null));
     }
