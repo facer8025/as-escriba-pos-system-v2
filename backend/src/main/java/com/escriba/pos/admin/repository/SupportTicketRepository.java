@@ -18,11 +18,12 @@ public interface SupportTicketRepository extends JpaRepository<SupportTicket, UU
     long countBySlaBreachedTrueAndStatusNot(String status);
     long countByPriorityAndStatusNot(String priority, String status);
 
-    @Query("SELECT COUNT(t) FROM SupportTicket t WHERE t.ticketNumber LIKE :datePrefix%")
+    @Query("SELECT COUNT(t) FROM SupportTicket t WHERE t.ticketNumber LIKE CONCAT(:datePrefix, '%')")
     long countByCreatedAtToday(@Param("datePrefix") String datePrefix);
 
-    @Query("SELECT AVG(EXTRACT(EPOCH FROM (t.closedAt - t.createdAt)) / 3600.0) FROM SupportTicket t " +
-           "WHERE t.status = 'CLOSED' AND t.createdAt >= :since AND t.createdAt <= :until")
+    @Query(value = "SELECT AVG(EXTRACT(EPOCH FROM (closed_at - created_at)) / 3600.0) " +
+           "FROM support_tickets t WHERE t.status = 'CLOSED' AND t.created_at >= :since AND t.created_at <= :until",
+           nativeQuery = true)
     Double avgResolutionHours(@Param("since") LocalDateTime since, @Param("until") LocalDateTime until);
 
     List<SupportTicket> findByTenantIdOrderByCreatedAtDesc(UUID tenantId);

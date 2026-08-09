@@ -10,10 +10,15 @@ RUN npm ci
 COPY . .
 RUN npm run build
 
-# Nginx
+# Nginx (template con envsubst: NGINX_PORT / BACKEND_UPSTREAM)
 FROM nginx:1.27-alpine
+
+# Valores por defecto (el compose los sobreescribe según el entorno)
+ENV NGINX_PORT=80 \
+    BACKEND_UPSTREAM=backend:8080
+
 COPY --from=build /app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY nginx.template.conf /etc/nginx/templates/default.conf.template
 
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]

@@ -1,0 +1,74 @@
+# ============================================================================
+# ESCRIBA POS — Override para entornos SIN soporte de red bridge Docker
+# (kernel sin módulo veth: error "failed to add the host (veth..) <=> sandbox
+#  (veth..) pair interfaces: operation not supported")
+#
+# Uso:
+#   docker compose -f docker-compose.yml -f docker-compose.host.yml up -d --build
+#
+# Con network_mode: host los contenedores comparten la red del host y NO
+# necesitan crear interfaces veth. Los puertos se adaptan para evitar
+# conflictos con servicios existentes en la máquina.
+# ============================================================================
+
+services:
+  # --- PostgreSQL: escucha en 5433 del host (5432 ocupado por postgres nativo)
+  postgres:
+    network_mode: host
+    ports: !reset []
+    networks: !reset []
+    environment:
+      PGPORT: 5433
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h localhost -p 5433 -U escriba_user -d escriba_pos"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # --- Redis: puerto estándar 6379 (libre en el host)
+  redis:
+    network_mode: host
+    ports: !reset []
+    networks: !reset []
+
+  # --- Backend: escucha en 8082 del host (8080 ocupado)
+  backend:
+    network_mode: host
+    ports: !reset []
+    networks: !reset []
+    build:
+      network: host
+    environment:
+      SERVER_PORT: 8082
+      DB_HOST: localhost
+      DB_PORT: 5433
+      REDIS_HOST: localhost
+      REDIS_PORT: 6379
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:3000,http://localhost:3001}
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8082/api/v1/actuator/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+
+  # --- Panel POS: nginx en 3000 del host, proxy al backend en localhost:8082
+  frontend:
+    network_mode: host
+    ports: !reset []
+    networks: !reset []
+    build:
+      network: host
+    environment:
+      NGINX_PORT: 3000
+      BACKEND_UPSTREAM: localhost:8082
+
+  # --- Panel Admin: nginx en 3001 del host, proxy al backend en localhost:8082
+  frontend-admin:
+    network_mode: host
+    ports: !reset []
+    networks: !reset []
+    build:
+      network: host
+    environment:
+      NGINX_PORT: 3001
+      BACKEND_UPSTREAM: localhost:8082

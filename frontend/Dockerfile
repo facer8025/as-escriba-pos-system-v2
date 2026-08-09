@@ -19,44 +19,15 @@ RUN npm run build
 # ========================================================================
 FROM nginx:1.27-alpine AS runtime
 
+# Valores por defecto (el compose los sobreescribe según el entorno)
+ENV NGINX_PORT=80 \
+    BACKEND_UPSTREAM=backend:8080
+
 # Copy built assets
 COPY --from=build /app/dist /usr/share/nginx/html
 
-# Custom nginx config for SPA routing
-RUN cat > /etc/nginx/conf.d/default.conf << 'NGINX_CONFIG'
-server {
-    listen 80;
-    root /usr/share/nginx/html;
-    index index.html;
-
-    # Security headers
-    add_header X-Frame-Options "DENY" always;
-    add_header X-Content-Type-Options "nosniff" always;
-    add_header X-XSS-Protection "1; mode=block" always;
-    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
-    add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' http://localhost:*; frame-ancestors 'none';" always;
-    add_header Permissions-Policy "camera=(), microphone=(), geolocation=()" always;
-
-    location / {
-        try_files $uri $uri/ /index.html;
-    }
-    location /api/ {
-        proxy_pass http://backend:8080;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
-    location /uploads/ {
-        proxy_pass http://backend:8080/api/v1/uploads/;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        expires 7d;
-    }
-}
-NGINX_CONFIG
+# Plantilla nginx (envsubst del entrypoint oficial sustituye NGINX_PORT / BACKEND_UPSTREAM)
+COPY nginx.template.conf /etc/nginx/templates/default.conf.template
 
 EXPOSE 80
 
