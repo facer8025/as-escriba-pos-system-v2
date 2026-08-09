@@ -36,21 +36,27 @@ public class Plan {
     private BigDecimal priceAnnual;
 
     @Column(name = "tax_rate", precision = 5, scale = 2)
+    @Builder.Default
     private BigDecimal taxRate = new BigDecimal("19");
 
     @Column(length = 3)
+    @Builder.Default
     private String currency = "COP";
 
     @Column(name = "trial_days")
+    @Builder.Default
     private Integer trialDays = 0;
 
     @Column(name = "badge_color", length = 7)
+    @Builder.Default
     private String badgeColor = "#4f46e5";
 
     @Column(name = "is_featured")
+    @Builder.Default
     private Boolean isFeatured = false;
 
     @Column(name = "is_visible_web")
+    @Builder.Default
     private Boolean isVisibleWeb = true;
 
     @Column(length = 20)
