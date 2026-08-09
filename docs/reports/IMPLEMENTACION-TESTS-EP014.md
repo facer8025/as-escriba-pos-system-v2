@@ -74,9 +74,35 @@ arranca por completo (beans, JPA mappings, Flyway V5 idempotente).
 mvn test  → ✅ Tests run: 32, Failures: 0, Errors: 0, Skipped: 0 (BUILD SUCCESS)
 ```
 
-## 7. Pendiente
+## 7. Tests de frontend (Vitest) — frontend-admin
 
-- [ ] Tests de frontend (Vitest) en frontend-admin
-- [ ] Tests unitarios para más servicios: InventoryService (kardex/costo promedio),
+Se configuró Vitest 4 + Testing Library en `frontend-admin`:
+
+### Infraestructura
+- `vitest.config.ts` (jsdom, alias `@`, setup file)
+- `src/test/setup.ts` (jest-dom + limpieza automática)
+- `package.json`: scripts `test` / `test:watch`
+- Tests excluidos del build de producción (`tsconfig.app.json`)
+
+### Tests creados (50)
+| Suite | Tests | Cubre |
+|-------|-------|-------|
+| `lib/utils.test.ts` | 19 | formatCurrency (COP), formatDate/DateTime, formatRelativeTime, cn (tailwind-merge), generateId, roles admin, estados empresa |
+| `button.test.tsx` | 6 | Variantes, disabled, loading (spinner), onClick |
+| `badge.test.tsx` | 10 | Variantes y mapeo de estados (StatusBadge) |
+| `toggle.test.tsx` | 5 | aria-checked, label, onChange controlado, disabled |
+| `search-input.test.tsx` | 4 | Placeholder, valor controlado, onChange |
+| `admin-auth-store.test.ts` | 9 | login (éxito/TOTP/fallo), verifyTotp, logout, refreshSession, persistencia sessionStorage |
+
+### Verificación
+```
+npm test      → ✅ Test Files 6, Tests 50, all passed
+npm run build → ✅ tsc + vite build OK
+```
+
+## 8. Pendiente
+
+- [ ] Tests de frontend del panel cliente (`frontend/`) — misma infraestructura
+- [ ] Tests unitarios para más servicios backend: InventoryService (kardex/costo promedio),
       CashSessionService (cierre de caja), LicenseService (ciclo de vida licencias),
       InvoiceService (facturación admin)

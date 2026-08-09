@@ -154,9 +154,9 @@
 ### EP-014: Pruebas automatizadas
 - [x] Tests unitarios (JUnit 5 + Mockito) — SaleServiceTest (10), AuthServiceTest (14), PlanServiceTest (8) ✅
 - [x] Tests de integración (Testcontainers) — `EscribaPosApplicationIT` (PostgreSQL + Redis, requiere Docker con soporte bridge; se ejecuta con `mvn verify`) ✅
-- [ ] Tests de frontend (Vitest) — pendiente configurar en frontend-admin
+- [x] Tests de frontend (Vitest) — frontend-admin: 50 tests (utils, Button, Badge/StatusBadge, Toggle, SearchInput, admin-auth-store) ✅
 - **Prioridad:** Media
-- **Avance:** 2/3 (32 tests unitarios pasando, bug de defaults Lombok detectado y corregido)
+- **Avance:** 3/3 (32 tests backend + 50 tests frontend pasando)
 
 ---
 
