@@ -143,7 +143,7 @@ export function ComunicacionesPage() {
             className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-colors cursor-pointer ${
               statusFilter === f.value
                 ? 'bg-escriba-600 text-white'
-                : 'bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 text-neutral-600 hover:bg-neutral-50'
+                : 'bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 text-neutral-600 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800'
             }`}>
             {f.label}
           </button>
@@ -165,7 +165,7 @@ export function ComunicacionesPage() {
           <p className="text-[10px] text-neutral-400">Enviados</p>
         </div>
         <div className="bg-white dark:bg-neutral-900 rounded-xl border p-3 text-center">
-          <p className="text-lg font-bold text-neutral-600">
+          <p className="text-lg font-bold text-neutral-600 dark:text-neutral-300">
             {announcements.reduce((sum, a) => sum + (a.totalRecipients || 0), 0)}
           </p>
           <p className="text-[10px] text-neutral-400">Total destinatarios</p>

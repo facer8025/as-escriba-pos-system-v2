@@ -22,6 +22,7 @@ import { ComunicacionesPage } from '@/features/comunicaciones/comunicaciones-pag
 import { MonitoreoPage } from '@/features/monitoreo/monitoreo-page'
 import { AuditoriaPage } from '@/features/auditoria/auditoria-page'
 import { ConfiguracionPage } from '@/features/configuracion/configuracion-page'
+import { MiPerfilPage } from '@/features/perfil/mi-perfil-page'
 
 export function AdminRouter() {
   return (
@@ -44,6 +45,9 @@ export function AdminRouter() {
           {/* Módulo 1: Dashboard global (todos los roles) */}
           <Route path="/" element={<DashboardPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
+
+          {/* Perfil del admin autenticado (todos los roles) */}
+          <Route path="/perfil" element={<MiPerfilPage />} />
 
           {/* Módulo 2: Gestión de empresas (SA, AC write | ST, AU read) */}
           <Route

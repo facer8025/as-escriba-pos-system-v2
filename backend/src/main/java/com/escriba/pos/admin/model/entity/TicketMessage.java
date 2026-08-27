@@ -2,6 +2,8 @@ package com.escriba.pos.admin.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -30,6 +32,7 @@ public class TicketMessage {
     private Boolean isInternalNote = false;
 
     @Column(columnDefinition = "JSONB")
+    @JdbcTypeCode(SqlTypes.JSON)
     private String attachments;
 
     @Column(name = "created_at", updatable = false)

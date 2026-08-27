@@ -1,5 +1,6 @@
 package com.escriba.pos.exception;
 
+import com.escriba.pos.admin.exception.AdminBusinessException;
 import com.escriba.pos.dto.response.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ApiResponse<Void>> handleBusinessException(BusinessException ex) {
+        return ResponseEntity.badRequest()
+                .body(ApiResponse.error(ex.getMessage()));
+    }
+
+    @ExceptionHandler(AdminBusinessException.class)
+    public ResponseEntity<ApiResponse<Void>> handleAdminBusinessException(AdminBusinessException ex) {
         return ResponseEntity.badRequest()
                 .body(ApiResponse.error(ex.getMessage()));
     }

@@ -2,6 +2,7 @@ package com.escriba.pos.admin.controller;
 
 import com.escriba.pos.admin.model.dto.request.CreateInvoiceRequest;
 import com.escriba.pos.admin.model.dto.request.RegisterPaymentRequest;
+import com.escriba.pos.admin.model.dto.request.UpdateInvoiceRequest;
 import com.escriba.pos.admin.model.dto.response.InvoiceResponse;
 import com.escriba.pos.admin.service.InvoiceService;
 import com.escriba.pos.dto.response.ApiResponse;
@@ -38,6 +39,18 @@ public class AdminInvoiceController {
     public ResponseEntity<ApiResponse<InvoiceResponse>> createInvoice(
             @Valid @RequestBody CreateInvoiceRequest request) {
         return ResponseEntity.ok(ApiResponse.success(invoiceService.createInvoice(request, null)));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<InvoiceResponse>> updateInvoice(
+            @PathVariable UUID id,
+            @Valid @RequestBody UpdateInvoiceRequest request) {
+        return ResponseEntity.ok(ApiResponse.success(invoiceService.updateInvoice(id, request)));
+    }
+
+    @PostMapping("/{id}/cancel")
+    public ResponseEntity<ApiResponse<InvoiceResponse>> cancelInvoice(@PathVariable UUID id) {
+        return ResponseEntity.ok(ApiResponse.success(invoiceService.cancelInvoice(id)));
     }
 
     @PostMapping("/register-payment")

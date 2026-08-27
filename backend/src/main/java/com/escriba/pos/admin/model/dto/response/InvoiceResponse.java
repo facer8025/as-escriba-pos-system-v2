@@ -15,6 +15,7 @@ public class InvoiceResponse {
     private String tenantName;
     private String invoiceNumber;
     private String concept;
+    private String description;
     private BigDecimal amountNet;
     private BigDecimal taxPct;
     private BigDecimal taxAmount;
@@ -25,5 +26,6 @@ public class InvoiceResponse {
     private String status;
     private String paymentMethod;
     private String paymentReference;
+    private String notes;
     private String pdfUrl;
 }

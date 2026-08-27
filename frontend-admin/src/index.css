@@ -33,6 +33,34 @@
 }
 
 /* ================================================================ */
+/* Base tipográfica — estandarizada para tema claro y oscuro        */
+/* ================================================================ */
+@layer base {
+  html {
+    font-family: var(--font-sans);
+    /* Crítico en dark mode: suaviza los bordes de las fuentes claras
+       sobre fondos oscuros y evita el efecto de “halo”/grosor extra */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply bg-neutral-50 text-neutral-900 dark:bg-neutral-950 dark:text-neutral-100;
+  }
+
+  /* Números (montos, NIT, fechas): alineación tabular consistente */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Etiqueta micro estándar (timestamps, IDs, badges pequeños) */
+  .micro {
+    @apply text-[10px] leading-none tracking-wide;
+  }
+}
+
+/* ================================================================ */
 /* Componentes UI — usando @apply con utilities de Tailwind v4       */
 /* ================================================================ */
 
@@ -169,6 +197,7 @@
 .modal-content {
   @apply bg-white dark:bg-neutral-900 rounded-2xl shadow-xl
          border border-neutral-200 dark:border-neutral-800
+         text-neutral-900 dark:text-neutral-100
          max-h-[90vh] overflow-y-auto;
 }
 

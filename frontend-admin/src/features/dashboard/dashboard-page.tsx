@@ -212,7 +212,7 @@ export function DashboardPage() {
               {planDistribution.map((p) => (
                 <div key={p.name} className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full" style={{ backgroundColor: p.color }} />
-                  <span className="text-xs text-neutral-600">{p.name}</span>
+                  <span className="text-xs text-neutral-600 dark:text-neutral-300">{p.name}</span>
                   <span className="text-xs font-medium">{p.value}</span>
                 </div>
               ))}
@@ -279,7 +279,7 @@ export function DashboardPage() {
                       service.status === 'UP' ? 'bg-green-500' :
                       service.status === 'DEGRADED' ? 'bg-amber-500' : 'bg-danger-500'
                     }`} />
-                    <span className="text-sm text-neutral-700">{service.serviceName}</span>
+                    <span className="text-sm text-neutral-700 dark:text-neutral-200">{service.serviceName}</span>
                   </div>
                   <div className="flex items-center gap-4 text-xs text-neutral-400">
                     <span className="font-mono">{service.uptime30d}% uptime</span>
@@ -303,8 +303,8 @@ export function DashboardPage() {
                       {activity.user.charAt(0)}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm text-neutral-700">
-                        <span className="font-medium text-neutral-900">{activity.user}</span>{' '}
+                      <p className="text-sm text-neutral-700 dark:text-neutral-200">
+                        <span className="font-medium text-neutral-900 dark:text-neutral-100">{activity.user}</span>{' '}
                         {activity.action}{' '}
                         <span className="font-medium">{activity.target}</span>
                       </p>
@@ -380,7 +380,7 @@ function SummaryRow({ label, value }: { label: string; value: string | number })
   return (
     <div className="flex justify-between items-center">
       <span className="text-sm text-neutral-500">{label}</span>
-      <span className="text-sm font-semibold text-neutral-900">{value}</span>
+      <span className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">{value}</span>
     </div>
   )
 }

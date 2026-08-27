@@ -45,7 +45,7 @@ export function PlanesListPage() {
         <div className="flex items-center gap-3">
           <button onClick={() => setShowArchived(!showArchived)}
             className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium border transition-colors cursor-pointer ${
-              showArchived ? 'bg-neutral-100 border-neutral-300 text-neutral-700' : 'border-neutral-200 text-neutral-500 hover:bg-neutral-50'
+              showArchived ? 'bg-neutral-100 dark:bg-neutral-700 border-neutral-300 dark:border-neutral-600 text-neutral-700 dark:text-neutral-100' : 'border-neutral-200 dark:border-neutral-700 text-neutral-500 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-800'
             }`}>
             <Archive className="w-3.5 h-3.5" />
             {showArchived ? 'Ver activos' : 'Archivados'}

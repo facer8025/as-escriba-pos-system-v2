@@ -1,6 +1,7 @@
 package com.escriba.pos.admin.controller;
 
 import com.escriba.pos.admin.model.dto.request.CreateLicenseRequest;
+import com.escriba.pos.admin.model.dto.request.UpdateLicenseRequest;
 import com.escriba.pos.admin.model.dto.response.LicenseResponse;
 import com.escriba.pos.admin.service.LicenseService;
 import com.escriba.pos.dto.response.ApiResponse;
@@ -21,11 +22,12 @@ public class AdminLicenseController {
 
     @GetMapping
     public ResponseEntity<ApiResponse<Page<LicenseResponse>>> listLicenses(
+            @RequestParam(required = false) UUID tenantId,
             @RequestParam(required = false) String status,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
         return ResponseEntity.ok(ApiResponse.success(
-                licenseService.listLicenses(status, page, size)));
+                licenseService.listLicenses(tenantId, status, page, size)));
     }
 
     @GetMapping("/{id}")
@@ -37,6 +39,19 @@ public class AdminLicenseController {
     public ResponseEntity<ApiResponse<LicenseResponse>> createLicense(
             @Valid @RequestBody CreateLicenseRequest request) {
         return ResponseEntity.ok(ApiResponse.success(licenseService.createLicense(request, null)));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<LicenseResponse>> updateLicense(
+            @PathVariable UUID id,
+            @Valid @RequestBody UpdateLicenseRequest request) {
+        return ResponseEntity.ok(ApiResponse.success(licenseService.updateLicense(id, request)));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<Void>> deleteLicense(@PathVariable UUID id) {
+        licenseService.deleteLicense(id);
+        return ResponseEntity.ok(ApiResponse.<Void>success("Licencia eliminada", null));
     }
 
     @PostMapping("/{id}/renew")

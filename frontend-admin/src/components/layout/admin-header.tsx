@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useNavigate } from 'react-router-dom'
 import {
   Bell,
   ChevronDown,
@@ -17,6 +18,7 @@ import { getAdminRoleName } from '@/lib/utils'
 export function AdminHeader() {
   const { user, logout } = useAdminAuthStore()
   const { theme, setTheme, sidebarCollapsed, toggleSidebar } = useAdminUiStore()
+  const navigate = useNavigate()
   const [profileOpen, setProfileOpen] = useState(false)
 
   const themeIcon = {
@@ -108,7 +110,7 @@ export function AdminHeader() {
                   </div>
                   <div className="p-3">
                     <button
-                      onClick={() => setProfileOpen(false)}
+                      onClick={() => { setProfileOpen(false); navigate('/perfil') }}
                       className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 w-full transition-colors cursor-pointer"
                     >
                       <User className="h-4 w-4" />

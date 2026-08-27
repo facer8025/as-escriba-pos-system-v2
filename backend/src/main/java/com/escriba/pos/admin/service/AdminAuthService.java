@@ -1,7 +1,9 @@
 package com.escriba.pos.admin.service;
 
+import com.escriba.pos.admin.model.dto.request.AdminChangePasswordRequest;
 import com.escriba.pos.admin.model.dto.request.AdminLoginRequest;
 import com.escriba.pos.admin.model.dto.request.AdminTotpVerifyRequest;
+import com.escriba.pos.admin.model.dto.request.AdminUpdateProfileRequest;
 import com.escriba.pos.admin.model.dto.response.AdminAuthResponse;
 import com.escriba.pos.admin.model.dto.response.AdminUserResponse;
 import com.escriba.pos.admin.model.entity.AdminRefreshToken;
@@ -168,6 +170,38 @@ public class AdminAuthService {
         AdminUser user = adminUserRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         return toUserResponse(user);
+    }
+
+    /** Actualizar perfil del admin autenticado */
+    @Transactional
+    public AdminUserResponse updateProfile(UUID userId, AdminUpdateProfileRequest request) {
+        AdminUser user = adminUserRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
+        if (request.getPhone() != null) user.setPhone(request.getPhone());
+        if (request.getPosition() != null) user.setPosition(request.getPosition());
+
+        adminUserRepository.save(user);
+        return toUserResponse(user);
+    }
+
+    /** Cambiar contraseña del admin autenticado */
+    @Transactional
+    public void changePassword(UUID userId, AdminChangePasswordRequest request) {
+        AdminUser user = adminUserRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPasswordHash())) {
+            throw new RuntimeException("La contraseña actual es incorrecta");
+        }
+
+        user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
+        adminUserRepository.save(user);
+
+        // Revocar todas las sesiones activas tras un cambio de contraseña
+        refreshTokenRepository.deleteByAdminUserId(userId);
     }
 
     // --- Helpers ---

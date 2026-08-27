@@ -7,9 +7,27 @@
     @apply border-surface-100 dark:border-surface-700;
   }
 
+  html {
+    /* Crítico en dark mode: suaviza los bordes de las fuentes claras
+       sobre fondos oscuros y evita el efecto de “halo”/grosor extra */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
   body {
     @apply bg-[#efeae4] text-surface-800 dark:bg-[#0a0a1a] dark:text-surface-100;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  /* Números (montos, NIT, fechas): alineación tabular consistente */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Etiqueta micro estándar (timestamps, IDs, badges pequeños) */
+  .micro {
+    @apply text-[10px] leading-none tracking-wide;
   }
 
   /* Scrollbar personalizada */

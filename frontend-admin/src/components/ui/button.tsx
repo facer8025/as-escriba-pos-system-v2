@@ -10,7 +10,7 @@ const variants = {
   primary: 'bg-escriba-600 text-white hover:bg-escriba-700 shadow-sm',
   secondary: 'bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-700',
   danger: 'bg-danger-500 text-white hover:bg-danger-600 shadow-sm',
-  ghost: 'text-neutral-500 hover:text-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800',
+  ghost: 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800',
   'ghost-strong': 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800',
 }
 

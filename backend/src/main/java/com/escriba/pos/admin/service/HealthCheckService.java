@@ -4,6 +4,8 @@ import com.escriba.pos.admin.model.entity.ServiceHealthLog;
 import com.escriba.pos.admin.repository.ServiceHealthLogRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -27,11 +29,19 @@ public class HealthCheckService {
     private final ServiceHealthLogRepository healthLogRepository;
     private final DataSource dataSource;
     private final JavaMailSenderImpl mailSender;
+    private final RedisConnectionFactory redisConnectionFactory;
+
+    @Value("${server.port:8080}")
+    private int serverPort;
+
+    @Value("${server.servlet.context-path:}")
+    private String contextPath;
 
     // Track previous status to detect changes
     private String lastDbStatus = "UP";
     private String lastMailStatus = "UP";
     private String lastApiStatus = "UP";
+    private String lastRedisStatus = "UP";
 
     /**
      * Ejecuta health checks cada 5 minutos.
@@ -42,6 +52,7 @@ public class HealthCheckService {
         checkDatabase();
         checkMailServer();
         checkSelfApi();
+        checkRedis();
 
         // Calcular uptime 30d desde los logs existentes
         updateUptimeMetrics();
@@ -104,12 +115,15 @@ public class HealthCheckService {
     }
 
     /**
-     * Health check de la propia API REST: GET /admin/ping
+     * Health check de la propia API REST: GET /api/v1/admin/ping
+     * usando el puerto y context-path reales del servidor.
      */
     public ServiceHealthLog checkSelfApi() {
         long start = System.currentTimeMillis();
         try {
-            URI uri = new URI("http://localhost:8080/admin/ping");
+            String base = "http://localhost:" + serverPort
+                    + (contextPath != null ? contextPath : "");
+            URI uri = new URI(base + "/admin/ping");
             HttpURLConnection conn = (HttpURLConnection) uri.toURL().openConnection();
             conn.setRequestMethod("GET");
             conn.setConnectTimeout(3000);
@@ -130,6 +144,35 @@ public class HealthCheckService {
             log.error("Health check API falló: {}", e.getMessage());
             lastApiStatus = "DOWN";
             return saveHealthLog("API REST", "DOWN", (int) ms, e.getMessage());
+        }
+    }
+
+    /**
+     * Health check de Redis: ejecuta PING sobre la conexión configurada.
+     */
+    public ServiceHealthLog checkRedis() {
+        long start = System.currentTimeMillis();
+        try {
+            String pong;
+            try (var connection = redisConnectionFactory.getConnection()) {
+                pong = connection.ping();
+            }
+            if (pong == null || !pong.equalsIgnoreCase("PONG")) {
+                throw new IllegalStateException("PING inesperado: " + pong);
+            }
+            long ms = System.currentTimeMillis() - start;
+
+            ServiceHealthLog healthLog = saveHealthLog("Redis", "UP", (int) ms, null);
+            if (!"UP".equals(lastRedisStatus)) {
+                log.warn("Redis recuperado — estado UP");
+            }
+            lastRedisStatus = "UP";
+            return healthLog;
+        } catch (Exception e) {
+            long ms = System.currentTimeMillis() - start;
+            log.error("Health check Redis falló: {}", e.getMessage());
+            lastRedisStatus = "DOWN";
+            return saveHealthLog("Redis", "DOWN", (int) ms, e.getMessage());
         }
     }
 

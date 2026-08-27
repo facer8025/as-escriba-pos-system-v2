@@ -1,5 +1,7 @@
 package com.escriba.pos.admin.security;
 
+import com.escriba.pos.admin.model.entity.AdminUser;
+import com.escriba.pos.admin.repository.AdminUserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,6 +24,7 @@ import java.util.UUID;
 public class AdminJwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final AdminJwtTokenProvider tokenProvider;
+    private final AdminUserRepository adminUserRepository;
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String BEARER_PREFIX = "Bearer ";
 
@@ -49,12 +52,20 @@ public class AdminJwtAuthenticationFilter extends OncePerRequestFilter {
             String role = tokenProvider.getRoleFromToken(token);
             String tokenType = tokenProvider.getTokenType(token);
 
+            // Cargar el AdminUser real como principal para que
+            // @AuthenticationPrincipal AdminUser funcione en los controllers
+            AdminUser adminUser = adminUserRepository.findById(adminUserId).orElse(null);
+            if (adminUser == null) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
             List<SimpleGrantedAuthority> authorities = List.of(
                     new SimpleGrantedAuthority("ROLE_ADMIN_" + role)
             );
 
             UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(adminUserId, null, authorities);
+                    new UsernamePasswordAuthenticationToken(adminUser, null, authorities);
 
             authentication.setDetails(new AdminJwtAuthenticationDetails(
                     adminUserId, role, tokenType));

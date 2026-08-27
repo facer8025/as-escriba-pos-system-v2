@@ -75,6 +75,7 @@ public class SystemConfigService {
 
     // ── Maintenance Windows ────────────────────────────────────────
 
+        @Transactional(readOnly = true)
     public List<MaintenanceWindow> getMaintenanceWindows() {
         return maintenanceWindowRepository.findByStartsAtAfterOrderByStartsAtAsc(
                 java.time.LocalDateTime.now());

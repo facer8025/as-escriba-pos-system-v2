@@ -57,6 +57,8 @@ export interface Tenant {
   department?: string
   phone?: string
   email: string
+  adminEmail?: string
+  adminUserId?: string
   logoUrl?: string
   status: TenantStatus
   schemaName: string
@@ -249,6 +251,7 @@ export interface TenantInvoice {
   tenantName: string
   invoiceNumber: string
   concept: string
+  description?: string
   amountNet: number
   taxPct: number
   taxAmount: number
@@ -259,6 +262,7 @@ export interface TenantInvoice {
   status: InvoiceStatus
   paymentMethod?: string
   paymentReference?: string
+  notes?: string
   pdfUrl?: string
 }
 

@@ -59,7 +59,10 @@ async function request<T>(endpoint: string, options: ApiOptions = {}): Promise<T
     try {
       const refreshed = await authStore.refreshSession()
       if (refreshed) {
-        finalHeaders['Authorization'] = `Bearer ${authStore.accessToken}`
+        // Releer el estado: refreshSession() reemplazó el objeto del store,
+        // la snapshot `authStore` aún tiene el token viejo/expirado
+        const fresh = useAdminAuthStore.getState()
+        finalHeaders['Authorization'] = `Bearer ${fresh.accessToken}`
         const retryResponse = await fetch(url, {
           method,
           headers: finalHeaders,
@@ -94,14 +97,14 @@ export const api = {
   get: <T>(endpoint: string, params?: Record<string, string | number | boolean | undefined>) =>
     request<T>(endpoint, { params }),
 
-  post: <T>(endpoint: string, body?: unknown) =>
-    request<T>(endpoint, { method: 'POST', body }),
+  post: <T>(endpoint: string, body?: unknown, params?: Record<string, string | number | boolean | undefined>) =>
+    request<T>(endpoint, { method: 'POST', body, params }),
 
   put: <T>(endpoint: string, body?: unknown) =>
     request<T>(endpoint, { method: 'PUT', body }),
 
-  patch: <T>(endpoint: string, body?: unknown) =>
-    request<T>(endpoint, { method: 'PATCH', body }),
+  patch: <T>(endpoint: string, body?: unknown, params?: Record<string, string | number | boolean | undefined>) =>
+    request<T>(endpoint, { method: 'PATCH', body, params }),
 
   delete: <T>(endpoint: string) =>
     request<T>(endpoint, { method: 'DELETE' }),

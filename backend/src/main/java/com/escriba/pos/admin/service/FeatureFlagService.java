@@ -29,12 +29,14 @@ public class FeatureFlagService {
     private final TenantFeatureFlagRepository tenantFeatureFlagRepository;
     private final TenantRepository tenantRepository;
 
+        @Transactional(readOnly = true)
     public List<FeatureFlagResponse> listFeatureFlags() {
         return featureFlagRepository.findAll().stream()
                 .map(this::toFlagResponse)
                 .collect(Collectors.toList());
     }
 
+        @Transactional(readOnly = true)
     public FeatureFlagResponse getFeatureFlag(UUID id) {
         FeatureFlag flag = featureFlagRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Feature flag no encontrado"));
@@ -78,6 +80,7 @@ public class FeatureFlagService {
         return toFlagResponse(flag);
     }
 
+        @Transactional(readOnly = true)
     public List<TenantFeatureFlagResponse> getTenantFeatureFlags(UUID tenantId) {
         if (!tenantRepository.existsById(tenantId)) {
             throw new RuntimeException("Empresa no encontrada");

@@ -16,8 +16,8 @@ public interface AdminAuditLogRepository extends JpaRepository<AdminAuditLog, Lo
            "(:category IS NULL OR a.category = :category) " +
            "AND (:action IS NULL OR a.action = :action) " +
            "AND (:result IS NULL OR a.result = :result) " +
-           "AND (:fromDate IS NULL OR a.timestamp >= :fromDate) " +
-           "AND (:toDate IS NULL OR a.timestamp <= :toDate) " +
+           "AND (cast(:fromDate as timestamp) IS NULL OR a.timestamp >= :fromDate) " +
+           "AND (cast(:toDate as timestamp) IS NULL OR a.timestamp <= :toDate) " +
            "ORDER BY a.timestamp DESC")
     Page<AdminAuditLog> findByFilters(@Param("category") String category,
                                       @Param("action") String action,

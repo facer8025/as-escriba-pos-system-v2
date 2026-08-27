@@ -4,6 +4,7 @@ import com.escriba.pos.admin.model.entity.License;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -22,7 +23,9 @@ public interface LicenseRepository extends JpaRepository<License, UUID> {
     Long calculateMRR();
 
     @Query("SELECT l FROM License l WHERE " +
+           "(:tenantId IS NULL OR l.tenant.id = :tenantId) AND " +
            "(:status IS NULL OR l.status = :status) " +
            "ORDER BY l.createdAt DESC")
-    Page<License> findByFilters(@Param("status") String status, Pageable pageable);
+    Page<License> findByFilters(@Param("tenantId") UUID tenantId,
+                                @Param("status") String status, Pageable pageable);
 }

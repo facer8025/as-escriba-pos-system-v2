@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,6 +24,7 @@ public class AuditService {
     private final AdminAuditLogRepository auditLogRepository;
     private final SecurityAlertRepository securityAlertRepository;
 
+        @Transactional(readOnly = true)
     public Page<AuditLogResponse> listAuditLogs(String category, String action, String result,
                                                   LocalDateTime fromDate, LocalDateTime toDate,
                                                   int page, int size) {
@@ -31,12 +33,14 @@ public class AuditService {
                 .map(this::toAuditResponse);
     }
 
+        @Transactional(readOnly = true)
     public AuditLogResponse getAuditLog(Long id) {
         AdminAuditLog log = auditLogRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Log no encontrado"));
         return toAuditResponse(log);
     }
 
+        @Transactional(readOnly = true)
     public Page<SecurityAlertResponse> listSecurityAlerts(String status, int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
         return securityAlertRepository.findByFilters(status, pageRequest)

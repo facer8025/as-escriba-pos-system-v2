@@ -1,6 +1,8 @@
 package com.escriba.pos.admin.service;
 
+import com.escriba.pos.admin.exception.AdminBusinessException;
 import com.escriba.pos.admin.model.dto.request.CreateLicenseRequest;
+import com.escriba.pos.admin.model.dto.request.UpdateLicenseRequest;
 import com.escriba.pos.admin.model.dto.response.LicenseResponse;
 import com.escriba.pos.admin.model.entity.AdminUser;
 import com.escriba.pos.admin.model.entity.License;
@@ -10,6 +12,7 @@ import com.escriba.pos.admin.model.entity.Tenant;
 import com.escriba.pos.admin.repository.LicenseHistoryRepository;
 import com.escriba.pos.admin.repository.LicenseRepository;
 import com.escriba.pos.admin.repository.PlanRepository;
+import com.escriba.pos.admin.repository.TenantInvoiceRepository;
 import com.escriba.pos.admin.repository.TenantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,25 +31,28 @@ public class LicenseService {
     private final LicenseRepository licenseRepository;
     private final LicenseHistoryRepository licenseHistoryRepository;
     private final TenantRepository tenantRepository;
+    private final TenantInvoiceRepository invoiceRepository;
     private final PlanRepository planRepository;
 
-    public Page<LicenseResponse> listLicenses(String status, int page, int size) {
-        return licenseRepository.findByFilters(status, PageRequest.of(page, size))
+    @Transactional(readOnly = true)
+    public Page<LicenseResponse> listLicenses(UUID tenantId, String status, int page, int size) {
+        return licenseRepository.findByFilters(tenantId, status, PageRequest.of(page, size))
                 .map(this::toResponse);
     }
 
+    @Transactional(readOnly = true)
     public LicenseResponse getLicense(UUID id) {
         License license = licenseRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Licencia no encontrada"));
+                .orElseThrow(() -> new AdminBusinessException("Licencia no encontrada"));
         return toResponse(license);
     }
 
     @Transactional
     public LicenseResponse createLicense(CreateLicenseRequest request, AdminUser createdBy) {
         Tenant tenant = tenantRepository.findById(request.getTenantId())
-                .orElseThrow(() -> new RuntimeException("Empresa no encontrada"));
+                .orElseThrow(() -> new AdminBusinessException("Empresa no encontrada"));
         Plan plan = planRepository.findById(request.getPlanId())
-                .orElseThrow(() -> new RuntimeException("Plan no encontrado"));
+                .orElseThrow(() -> new AdminBusinessException("Plan no encontrado"));
 
         License license = License.builder()
                 .tenant(tenant)
@@ -69,9 +75,65 @@ public class LicenseService {
     }
 
     @Transactional
+    public LicenseResponse updateLicense(UUID id, UpdateLicenseRequest request) {
+        License license = licenseRepository.findById(id)
+                .orElseThrow(() -> new AdminBusinessException("Licencia no encontrada"));
+
+        String oldStatus = license.getStatus();
+
+        if (request.getPlanId() != null && !request.getPlanId().equals(license.getPlan().getId())) {
+            Plan newPlan = planRepository.findById(request.getPlanId())
+                    .orElseThrow(() -> new AdminBusinessException("Plan no encontrado"));
+            license.setPlan(newPlan);
+            license.setPricePaidMonthly(newPlan.getPriceMonthly());
+        }
+        if (request.getLicenseType() != null && !request.getLicenseType().isBlank()) {
+            license.setLicenseType(request.getLicenseType());
+        }
+        if (request.getStatus() != null && !request.getStatus().isBlank()) {
+            license.setStatus(request.getStatus());
+        }
+        if (request.getStartsAt() != null) {
+            license.setStartsAt(request.getStartsAt().atStartOfDay());
+        }
+        if (request.getExpiresAt() != null) {
+            license.setExpiresAt(request.getExpiresAt().atStartOfDay());
+        }
+        if (request.getAutoRenew() != null) {
+            license.setAutoRenew(request.getAutoRenew());
+        }
+        if (request.getGracePeriodDays() != null && request.getGracePeriodDays() >= 0) {
+            license.setGracePeriodDays(request.getGracePeriodDays());
+        }
+        if (request.getDiscountPct() != null) {
+            license.setDiscountPct(request.getDiscountPct());
+        }
+        if (request.getDiscountReason() != null) {
+            license.setDiscountReason(request.getDiscountReason());
+        }
+        if (request.getNotes() != null) {
+            license.setNotes(request.getNotes());
+        }
+
+        license = licenseRepository.save(license);
+        saveHistory(license, "UPDATED", oldStatus, license.getStatus());
+        return toResponse(license);
+    }
+
+    @Transactional
+    public void deleteLicense(UUID id) {
+        License license = licenseRepository.findById(id)
+                .orElseThrow(() -> new AdminBusinessException("Licencia no encontrada"));
+        // Desvincular facturas asociadas antes de eliminar (evita violación de FK)
+        invoiceRepository.detachFromLicense(id);
+        // El historial de la licencia se elimina en cascada (ON DELETE CASCADE)
+        licenseRepository.delete(license);
+    }
+
+    @Transactional
     public LicenseResponse renewLicense(UUID id) {
         License license = licenseRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Licencia no encontrada"));
+                .orElseThrow(() -> new AdminBusinessException("Licencia no encontrada"));
         LocalDateTime oldExpiry = license.getExpiresAt();
 
         license.setExpiresAt(license.getExpiresAt().plusMonths(1));
@@ -85,9 +147,9 @@ public class LicenseService {
     @Transactional
     public LicenseResponse changePlan(UUID id, Integer newPlanId) {
         License license = licenseRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Licencia no encontrada"));
+                .orElseThrow(() -> new AdminBusinessException("Licencia no encontrada"));
         Plan newPlan = planRepository.findById(newPlanId)
-                .orElseThrow(() -> new RuntimeException("Plan no encontrado"));
+                .orElseThrow(() -> new AdminBusinessException("Plan no encontrado"));
 
         Integer oldPlanId = license.getPlan().getId();
         license.setPlan(newPlan);
@@ -101,7 +163,7 @@ public class LicenseService {
     @Transactional
     public LicenseResponse updateStatus(UUID id, String status) {
         License license = licenseRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Licencia no encontrada"));
+                .orElseThrow(() -> new AdminBusinessException("Licencia no encontrada"));
         String oldStatus = license.getStatus();
         license.setStatus(status);
         license = licenseRepository.save(license);

@@ -1,10 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useNavigate, Link } from 'react-router-dom'
 import { ArrowLeft, Building2, User, FileText, Settings, Check, ChevronRight, Loader2 } from 'lucide-react'
 import { api } from '@/lib/api'
 import { useAdminAuthStore } from '@/stores/admin-auth-store'
-import type { AdminRoleCode } from '@/types/admin'
+import type { AdminRoleCode, Plan } from '@/types/admin'
 
 function notify(msg: string) {
   alert(msg)
@@ -42,6 +42,30 @@ export function EmpresaCreatePage() {
   const canWrite = userRole === 'SA' || userRole === 'AC'
   const [step, setStep] = useState(0)
   const [submitting, setSubmitting] = useState(false)
+  const [plans, setPlans] = useState<Plan[]>([])
+  const [plansLoading, setPlansLoading] = useState(true)
+
+  useEffect(() => {
+    let cancelled = false
+    api.get('/plans')
+      .then((response: any) => {
+        if (cancelled) return
+        const data = response?.data ?? response
+        const list = Array.isArray(data) ? data : data?.content ?? []
+        setPlans(list.filter((p: Plan) => p.status === 'ACTIVE'))
+        // Preseleccionar el primer plan si aún no se eligió uno
+        setForm(prev => prev.planId === 0 && list.length > 0
+          ? { ...prev, planId: list[0].id }
+          : prev)
+      })
+      .catch((err) => {
+        console.error('[EmpresaCreate] Error cargando planes:', err)
+      })
+      .finally(() => {
+        if (!cancelled) setPlansLoading(false)
+      })
+    return () => { cancelled = true }
+  }, [])
 
   const [form, setForm] = useState({
     personType: 'LEGAL',
@@ -82,7 +106,7 @@ export function EmpresaCreatePage() {
   }
 
   const canNext = () => {
-    if (step === 0) return form.nit && form.businessName && form.email && form.taxRegime
+    if (step === 0) return form.nit && form.businessName && form.email && form.taxRegime && form.department && form.city
     if (step === 1) return form.adminFirstName && form.adminLastName && form.adminEmail
     if (step === 2) return form.planId > 0 && form.licenseType
     return true
@@ -185,8 +209,14 @@ export function EmpresaCreatePage() {
             <div className="grid grid-cols-2 gap-4 mt-4">
               <div className="col-span-2"><label className="label">Plan *</label>
                 <select value={form.planId} onChange={e => update('planId', Number(e.target.value))} className="input">
-                  <option value={0}>Seleccionar plan...</option>
-                  {/* Plans loaded from API will populate this */}
+                  <option value={0} disabled>
+                    {plansLoading ? 'Cargando planes...' : 'Seleccionar plan...'}
+                  </option>
+                  {plans.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name} — ${Number(p.priceMonthly).toLocaleString('es-CO')}/mes
+                    </option>
+                  ))}
                 </select>
               </div>
               <div><label className="label">Tipo de licencia *</label>
@@ -221,7 +251,7 @@ export function EmpresaCreatePage() {
               <div><p className="text-xs text-neutral-400">Régimen</p><p className="text-sm font-medium">{form.taxRegime}</p></div>
               <div><p className="text-xs text-neutral-400">Ubicación</p><p className="text-sm font-medium">{form.city}, {form.department}</p></div>
               <div><p className="text-xs text-neutral-400">Admin</p><p className="text-sm font-medium">{form.adminFirstName} {form.adminLastName}</p></div>
-              <div><p className="text-xs text-neutral-400">Plan ID</p><p className="text-sm font-medium">{form.planId || '—'}</p></div>
+              <div><p className="text-xs text-neutral-400">Plan</p><p className="text-sm font-medium">{plans.find(p => p.id === form.planId)?.name || '—'}</p></div>
               <div><p className="text-xs text-neutral-400">Licencia</p><p className="text-sm font-medium">{form.licenseType} · {form.licenseDuration} meses</p></div>
             </div>
           </>

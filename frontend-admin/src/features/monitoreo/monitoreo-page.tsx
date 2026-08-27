@@ -85,7 +85,7 @@ export function MonitoreoPage() {
               </div>
               <div className="text-right text-[10px] text-neutral-400">
                 <p>{svc.responseTimeMs}ms</p>
-                {svc.lastCheck && <p className="text-[9px]">{new Date(svc.lastCheck).toLocaleTimeString('es-CO')}</p>}
+                {svc.lastCheck && <p className="text-[10px]">{new Date(svc.lastCheck).toLocaleTimeString('es-CO')}</p>}
               </div>
             </div>
           ))}
@@ -104,7 +104,7 @@ export function MonitoreoPage() {
           <MetricCard icon={<KeyIcon />} label="Licencias activas" value={data.metrics?.activeLicenses ?? 0} color="text-blue-600" />
           <MetricCard icon={<Ticket className="w-4 h-4" />} label="Tickets abiertos" value={data.metrics?.ticketsOpen ?? 0} color="text-amber-600" />
           <MetricCard icon={<FileText className="w-4 h-4" />} label="Facturas hoy" value={data.metrics?.invoicesToday ?? 0} color="text-escriba-600" />
-          <MetricCard icon={<Users className="w-4 h-4" />} label="Total licencias" value={data.metrics?.totalLicenses ?? 0} color="text-neutral-600" />
+          <MetricCard icon={<Users className="w-4 h-4" />} label="Total licencias" value={data.metrics?.totalLicenses ?? 0} color="text-neutral-600 dark:text-neutral-300" />
         </div>
       </div>
 

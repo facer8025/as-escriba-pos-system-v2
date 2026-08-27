@@ -1,6 +1,8 @@
 package com.escriba.pos.admin.model.entity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -16,8 +18,10 @@ public class LicenseHistory {
     @Column(name = "change_type", nullable = false, length = 30)
     private String changeType;
     @Column(name = "old_value", columnDefinition = "jsonb")
+    @JdbcTypeCode(SqlTypes.JSON)
     private String oldValue;
     @Column(name = "new_value", columnDefinition = "jsonb")
+    @JdbcTypeCode(SqlTypes.JSON)
     private String newValue;
     @Column(columnDefinition = "TEXT")
     private String notes;

@@ -18,6 +18,8 @@ public class TenantResponse {
     private String department;
     private String phone;
     private String email;
+    private String adminEmail;
+    private UUID adminUserId;
     private String logoUrl;
     private String status;
     private String schemaName;

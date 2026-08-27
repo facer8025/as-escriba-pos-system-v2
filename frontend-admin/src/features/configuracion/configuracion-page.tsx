@@ -90,7 +90,7 @@ export function ConfiguracionPage() {
               className={`flex items-center gap-1.5 px-4 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap cursor-pointer ${
                 activeTab === tab.id
                   ? 'border-escriba-600 text-escriba-600'
-                  : 'border-transparent text-neutral-500 hover:text-neutral-700'
+                  : 'border-transparent text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200'
               }`}>
               {tab.icon}
               {tab.label}

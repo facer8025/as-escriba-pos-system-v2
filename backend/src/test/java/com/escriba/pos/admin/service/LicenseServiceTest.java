@@ -10,6 +10,7 @@ import com.escriba.pos.admin.model.entity.Tenant;
 import com.escriba.pos.admin.repository.LicenseHistoryRepository;
 import com.escriba.pos.admin.repository.LicenseRepository;
 import com.escriba.pos.admin.repository.PlanRepository;
+import com.escriba.pos.admin.repository.TenantInvoiceRepository;
 import com.escriba.pos.admin.repository.TenantRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -35,6 +36,7 @@ class LicenseServiceTest {
     @Mock private LicenseRepository licenseRepository;
     @Mock private LicenseHistoryRepository licenseHistoryRepository;
     @Mock private TenantRepository tenantRepository;
+    @Mock private TenantInvoiceRepository invoiceRepository;
     @Mock private PlanRepository planRepository;
 
     private LicenseService licenseService;
@@ -47,7 +49,7 @@ class LicenseServiceTest {
     @BeforeEach
     void setUp() {
         licenseService = new LicenseService(licenseRepository, licenseHistoryRepository,
-                tenantRepository, planRepository);
+                tenantRepository, invoiceRepository, planRepository);
 
         admin = AdminUser.builder().email("admin@escriba.co").build();
         tenantId = UUID.randomUUID();

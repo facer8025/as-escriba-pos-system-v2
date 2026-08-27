@@ -142,7 +142,7 @@ export function TicketsReportPage() {
                 {report.openByPriority.filter(p => p.count > 0).map(p => (
                   <div key={p.priority}>
                     <div className="flex justify-between text-sm mb-1">
-                      <span className="text-neutral-600">{p.priority}</span>
+                      <span className="text-neutral-600 dark:text-neutral-300">{p.priority}</span>
                       <span className="font-medium">{p.count}</span>
                     </div>
                     <div className="h-2 bg-neutral-100 dark:bg-neutral-800 rounded-full overflow-hidden">
@@ -181,11 +181,11 @@ export function TicketsReportPage() {
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
                     <div className="w-3 h-3 rounded-full bg-green-500" />
-                    <span className="text-sm text-neutral-600">Cumplidos: {report.slaCompliance.met}</span>
+                    <span className="text-sm text-neutral-600 dark:text-neutral-300">Cumplidos: {report.slaCompliance.met}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-3 h-3 rounded-full bg-danger-500" />
-                    <span className="text-sm text-neutral-600">Vencidos: {report.slaCompliance.breached}</span>
+                    <span className="text-sm text-neutral-600 dark:text-neutral-300">Vencidos: {report.slaCompliance.breached}</span>
                   </div>
                 </div>
               </div>
@@ -198,7 +198,7 @@ export function TicketsReportPage() {
                 {report.avgResolutionByPriority.map(p => (
                   <div key={p.priority}>
                     <div className="flex justify-between text-sm mb-1">
-                      <span className="text-neutral-600">{p.priority}</span>
+                      <span className="text-neutral-600 dark:text-neutral-300">{p.priority}</span>
                       <span className="font-medium">{p.hours.toFixed(1)}h</span>
                     </div>
                     <div className="h-2 bg-neutral-100 dark:bg-neutral-800 rounded-full overflow-hidden">
@@ -224,10 +224,10 @@ export function TicketsReportPage() {
                       <p className="text-[10px] text-neutral-400">{t.ticketNumber} · {t.tenantName || 'Sin empresa'}</p>
                     </div>
                     <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
-                      t.status === 'OPEN' ? 'bg-neutral-100 text-neutral-600' :
-                      t.status === 'IN_PROGRESS' ? 'bg-escriba-50 text-escriba-600' :
-                      t.status === 'CLOSED' ? 'bg-green-50 text-green-600' :
-                      'bg-amber-50 text-amber-600'
+                      t.status === 'OPEN' ? 'bg-neutral-100 text-neutral-600 dark:bg-neutral-700 dark:text-neutral-200' :
+                      t.status === 'IN_PROGRESS' ? 'bg-escriba-50 text-escriba-600 dark:bg-escriba-900/30 dark:text-escriba-400' :
+                      t.status === 'CLOSED' ? 'bg-green-50 text-green-600 dark:bg-green-900/30 dark:text-green-400' :
+                      'bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400'
                     }`}>{t.status.replace('_', ' ')}</span>
                   </div>
                 ))}

@@ -23,6 +23,7 @@ public class CreateTenantRequest {
     @NotBlank private String adminLastName;
     @NotBlank @Email private String adminEmail;
     private String adminPhone;
+    @Size(min = 8, max = 72, message = "La contraseña del admin debe tener entre 8 y 72 caracteres")
     private String adminPassword;
     @NotNull private Integer planId;
     @NotBlank private String licenseType;

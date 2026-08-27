@@ -2,6 +2,8 @@ package com.escriba.pos.admin.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -25,9 +27,11 @@ public class Announcement {
     @Column(name = "header_image_url")
     private String headerImageUrl;
 
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "target_criteria", columnDefinition = "JSONB")
     private String targetCriteria;
 
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(nullable = false, columnDefinition = "JSONB")
     private String channels;
 

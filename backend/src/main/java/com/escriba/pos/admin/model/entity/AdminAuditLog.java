@@ -1,6 +1,8 @@
 package com.escriba.pos.admin.model.entity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -35,8 +37,10 @@ public class AdminAuditLog {
     @Column(name = "entity_id", length = 50)
     private String entityId;
     @Column(columnDefinition = "jsonb")
+    @JdbcTypeCode(SqlTypes.JSON)
     private String dataBefore;
     @Column(columnDefinition = "jsonb")
+    @JdbcTypeCode(SqlTypes.JSON)
     private String dataAfter;
     @Column(name = "ip_address")
     private String ipAddress;

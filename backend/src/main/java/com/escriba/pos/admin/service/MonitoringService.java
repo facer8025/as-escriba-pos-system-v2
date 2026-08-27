@@ -30,6 +30,7 @@ public class MonitoringService {
         String[][] defaultServices = {
             {"API REST", "UP"},
             {"PostgreSQL", "UP"},
+            {"Redis", "UP"},
             {"Email SMTP", "UP"},
         };
 
@@ -97,12 +98,17 @@ public class MonitoringService {
         } catch (Exception ignored) {}
         List<String> recentErrors = new ArrayList<>();
         var recentDownLogs = healthLogRepository.findRecentErrors(now.minusDays(7));
+        // Deduplicar: un solo ítem por servicio+mensaje (evita 20 líneas idénticas cada 5 min)
+        java.util.LinkedHashMap<String, String> seen = new java.util.LinkedHashMap<>();
         for (var log : recentDownLogs) {
-            String entry = "[" + log.getServiceName() + "] " +
-                    (log.getErrorMessage() != null ? log.getErrorMessage() : "Sin respuesta") +
+            String msg = log.getErrorMessage() != null ? log.getErrorMessage() : "Sin respuesta";
+            String key = log.getServiceName() + "|" + msg;
+            if (seen.containsKey(key)) continue;
+            String entry = "[" + log.getServiceName() + "] " + msg +
                     " — " + java.time.Duration.between(log.getCheckedAt(), now).toHours() + "h atrás";
-            recentErrors.add(entry);
+            seen.put(key, entry);
         }
+        recentErrors.addAll(seen.values());
         if (recentErrors.size() > 20) recentErrors = recentErrors.subList(0, 20);
 
         return MonitoringResponse.builder()

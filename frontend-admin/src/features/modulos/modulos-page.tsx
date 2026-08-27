@@ -27,7 +27,7 @@ export function ModulosPage() {
           className={`px-4 py-2.5 text-sm font-medium transition-all cursor-pointer border-b-2 -mb-px ${
             activeTab === 'modules'
               ? 'text-escriba-600 border-escriba-600 dark:text-escriba-400 dark:border-escriba-400'
-              : 'text-neutral-500 border-transparent hover:text-neutral-700 dark:hover:text-neutral-300'
+              : 'text-neutral-500 dark:text-neutral-400 border-transparent hover:text-neutral-700 dark:hover:text-neutral-200'
           }`}
         >
           <Building2 className="w-4 h-4 inline mr-1.5" />
@@ -38,7 +38,7 @@ export function ModulosPage() {
           className={`px-4 py-2.5 text-sm font-medium transition-all cursor-pointer border-b-2 -mb-px ${
             activeTab === 'feature-flags'
               ? 'text-escriba-600 border-escriba-600 dark:text-escriba-400 dark:border-escriba-400'
-              : 'text-neutral-500 border-transparent hover:text-neutral-700 dark:hover:text-neutral-300'
+              : 'text-neutral-500 dark:text-neutral-400 border-transparent hover:text-neutral-700 dark:hover:text-neutral-200'
           }`}
         >
           <Flag className="w-4 h-4 inline mr-1.5" />
@@ -278,9 +278,9 @@ function FeatureFlagsTab() {
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-medium text-neutral-900 dark:text-neutral-100">{flag.code}</span>
                     <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${
-                      flag.defaultState === 'ACTIVE_FOR_ALL' ? 'bg-green-50 text-green-600 dark:bg-green-900/20' :
-                      flag.defaultState === 'SPECIFIC_COMPANIES' ? 'bg-amber-50 text-amber-600 dark:bg-amber-900/20' :
-                      'bg-neutral-100 text-neutral-500 dark:bg-neutral-800'
+                      flag.defaultState === 'ACTIVE_FOR_ALL' ? 'bg-green-50 text-green-600 dark:bg-green-900/20 dark:text-green-400' :
+                      flag.defaultState === 'SPECIFIC_COMPANIES' ? 'bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-400' :
+                      'bg-neutral-100 text-neutral-500 dark:bg-neutral-700 dark:text-neutral-300'
                     }`}>
                       {flag.defaultState === 'ACTIVE_FOR_ALL' ? 'Activo global' :
                        flag.defaultState === 'SPECIFIC_COMPANIES' ? 'Por empresa' : 'Inactivo'}

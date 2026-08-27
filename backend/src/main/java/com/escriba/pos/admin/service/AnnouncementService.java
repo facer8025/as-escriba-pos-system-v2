@@ -1,5 +1,6 @@
 package com.escriba.pos.admin.service;
 
+import com.escriba.pos.admin.exception.AdminBusinessException;
 import com.escriba.pos.admin.model.dto.request.CreateAnnouncementRequest;
 import com.escriba.pos.admin.model.dto.request.UpdateAnnouncementRequest;
 import com.escriba.pos.admin.model.dto.response.AnnouncementResponse;
@@ -34,6 +35,7 @@ public class AnnouncementService {
     private final ObjectMapper objectMapper;
     private final EmailService emailService;
 
+        @Transactional(readOnly = true)
     public Page<AnnouncementResponse> listAnnouncements(String status, int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
         Page<Announcement> result;
@@ -47,9 +49,10 @@ public class AnnouncementService {
         return result.map(this::toResponse);
     }
 
+        @Transactional(readOnly = true)
     public AnnouncementResponse getAnnouncement(UUID id) {
         Announcement announcement = announcementRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Comunicado no encontrado"));
+                .orElseThrow(() -> new AdminBusinessException("Comunicado no encontrado"));
         return toResponse(announcement);
     }
 
@@ -82,10 +85,10 @@ public class AnnouncementService {
     @Transactional
     public AnnouncementResponse updateAnnouncement(UUID id, UpdateAnnouncementRequest request) {
         Announcement announcement = announcementRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Comunicado no encontrado"));
+                .orElseThrow(() -> new AdminBusinessException("Comunicado no encontrado"));
 
         if ("SENT".equals(announcement.getStatus())) {
-            throw new RuntimeException("No se puede modificar un comunicado ya enviado");
+            throw new AdminBusinessException("No se puede modificar un comunicado ya enviado");
         }
 
         if (request.getTitle() != null) announcement.setTitle(request.getTitle());
@@ -110,10 +113,10 @@ public class AnnouncementService {
     @Transactional
     public AnnouncementResponse sendAnnouncement(UUID id) {
         Announcement announcement = announcementRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Comunicado no encontrado"));
+                .orElseThrow(() -> new AdminBusinessException("Comunicado no encontrado"));
 
         if ("SENT".equals(announcement.getStatus())) {
-            throw new RuntimeException("El comunicado ya fue enviado");
+            throw new AdminBusinessException("El comunicado ya fue enviado");
         }
 
         // Calculate target tenants based on criteria

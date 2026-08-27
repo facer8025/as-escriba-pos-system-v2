@@ -46,6 +46,7 @@ public class TicketService {
 
     // ── LIST / FILTER ────────────────────────────────────────────────
 
+        @Transactional(readOnly = true)
     public Page<TicketResponse> listTickets(String search, String status, String priority,
                                              String category, UUID tenantId, UUID assignedTo,
                                              int page, int size) {
@@ -100,6 +101,7 @@ public class TicketService {
 
     // ── GET ─────────────────────────────────────────────────────────
 
+        @Transactional(readOnly = true)
     public TicketResponse getTicket(UUID id) {
         SupportTicket ticket = ticketRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Ticket no encontrado"));
@@ -117,7 +119,7 @@ public class TicketService {
 
         // Generate ticket number: T-YYYYMMDD-NNN
         String datePart = LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd"));
-        long count = ticketRepository.countByCreatedAtToday(datePart);
+        long count = ticketRepository.countByCreatedAtToday("T-" + datePart);
         String ticketNumber = String.format("T-%s-%03d", datePart, count + 1);
 
         // Calculate SLA deadline based on priority
@@ -214,6 +216,7 @@ public class TicketService {
 
     // ── MESSAGES ────────────────────────────────────────────────────
 
+        @Transactional(readOnly = true)
     public List<TicketMessageResponse> getTicketMessages(UUID ticketId) {
         return messageRepository.findByTicketIdOrderByCreatedAtAsc(ticketId).stream()
                 .map(this::toMessageResponse)
@@ -246,6 +249,7 @@ public class TicketService {
 
     // ── STATS ───────────────────────────────────────────────────────
 
+        @Transactional(readOnly = true)
     public TicketStatsResponse getStats() {
         long open = ticketRepository.countByStatus("OPEN");
         long inProgress = ticketRepository.countByStatus("IN_PROGRESS");

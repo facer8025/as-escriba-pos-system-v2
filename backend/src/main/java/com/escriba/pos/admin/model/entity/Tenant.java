@@ -76,6 +76,12 @@ public class Tenant {
     @Column(length = 100, unique = true)
     private String subdomain;
 
+    @Column(name = "admin_email", length = 150)
+    private String adminEmail;
+
+    @Column(name = "admin_user_id")
+    private UUID adminUserId;
+
     @Column(length = 50)
     @Builder.Default
     private String timezone = "America/Bogota";

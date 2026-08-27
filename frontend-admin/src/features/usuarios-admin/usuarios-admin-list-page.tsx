@@ -6,10 +6,13 @@ import {
 } from 'lucide-react'
 import { api } from '@/lib/api'
 import type { AdminUser } from '@/types/admin'
+import { useAdminAuthStore } from '@/stores/admin-auth-store'
 import { getAdminRoleBadgeClass, getAdminRoleName } from '@/lib/utils'
 import { Modal } from '@/components/ui/modal'
 
 export function UsuariosAdminListPage() {
+  const { user } = useAdminAuthStore()
+  const canWrite = user?.role === 'SA'
   const [users, setUsers] = useState<AdminUser[]>([])
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
@@ -50,11 +53,13 @@ export function UsuariosAdminListPage() {
           <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">Usuarios administradores</h1>
           <p className="text-sm text-neutral-500 mt-1">Gestión del equipo interno ESCRIBA</p>
         </div>
-        <button onClick={() => { setEditingUser(null); setShowModal(true) }}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-escriba-600 hover:bg-escriba-700 text-white text-sm font-medium transition-all cursor-pointer">
-          <Plus className="w-4 h-4" />
-          Nuevo admin
-        </button>
+        {canWrite && (
+          <button onClick={() => { setEditingUser(null); setShowModal(true) }}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-escriba-600 hover:bg-escriba-700 text-white text-sm font-medium transition-all cursor-pointer">
+            <Plus className="w-4 h-4" />
+            Nuevo admin
+          </button>
+        )}
       </div>
 
       {/* Stats */}
@@ -72,7 +77,7 @@ export function UsuariosAdminListPage() {
           <p className="text-[10px] text-neutral-400">2FA activo</p>
         </div>
         <div className="bg-white dark:bg-neutral-900 rounded-xl border p-3 text-center">
-          <p className="text-lg font-bold text-neutral-600">{users.length}</p>
+          <p className="text-lg font-bold text-neutral-600 dark:text-neutral-300">{users.length}</p>
           <p className="text-[10px] text-neutral-400">Total</p>
         </div>
       </div>
@@ -127,15 +132,15 @@ export function UsuariosAdminListPage() {
                     <span className="text-sm text-neutral-500">{user.position || '—'}</span>
                   </td>
                   <td className="px-4 py-3">
-                    <span className={`text-xs ${user.totpEnabled ? 'text-green-600' : 'text-neutral-400'}`}>
+                    <span className={`text-xs ${user.totpEnabled ? 'text-green-600 dark:text-green-400' : 'text-neutral-400 dark:text-neutral-500'}`}>
                       {user.totpEnabled ? '✅ Activo' : '❌ Pendiente'}
                     </span>
                   </td>
                   <td className="px-4 py-3">
                     <span className={`text-xs font-medium px-2 py-0.5 rounded ${
-                      user.status === 'ACTIVE' ? 'bg-green-50 text-green-600' :
-                      user.status === 'BLOCKED' ? 'bg-danger-50 text-danger-600' :
-                      'bg-neutral-100 text-neutral-500'
+                      user.status === 'ACTIVE' ? 'bg-green-50 text-green-600 dark:bg-green-900/30 dark:text-green-400' :
+                      user.status === 'BLOCKED' ? 'bg-danger-50 text-danger-600 dark:bg-red-900/30 dark:text-red-400' :
+                      'bg-neutral-100 text-neutral-500 dark:bg-neutral-700 dark:text-neutral-300'
                     }`}>
                       {user.status === 'ACTIVE' ? 'Activo' : 'Bloqueado'}
                     </span>
@@ -145,20 +150,24 @@ export function UsuariosAdminListPage() {
                   </td>
                   <td className="px-4 py-3 text-right">
                     <div className="flex items-center justify-end gap-1">
-                      <button onClick={() => { setEditingUser(user); setShowModal(true) }}
-                        className="p-1.5 rounded-lg text-neutral-400 hover:text-escriba-600 hover:bg-escriba-50 cursor-pointer"
-                        title="Editar">
-                        <UserCog className="w-4 h-4" />
-                      </button>
-                      <button onClick={() => handleToggleBlock(user.id)}
-                        className={`p-1.5 rounded-lg cursor-pointer ${
-                          user.status === 'BLOCKED'
-                            ? 'text-green-500 hover:bg-green-50'
-                            : 'text-danger-400 hover:bg-danger-50'
-                        }`}
-                        title={user.status === 'BLOCKED' ? 'Desbloquear' : 'Bloquear'}>
-                        {user.status === 'BLOCKED' ? <ShieldOff className="w-4 h-4" /> : <Shield className="w-4 h-4" />}
-                      </button>
+                      {canWrite && (
+                        <>
+                          <button onClick={() => { setEditingUser(user); setShowModal(true) }}
+                            className="p-1.5 rounded-lg text-neutral-400 hover:text-escriba-600 dark:hover:text-escriba-400 hover:bg-escriba-50 dark:hover:bg-escriba-900/20 cursor-pointer"
+                            title="Editar">
+                            <UserCog className="w-4 h-4" />
+                          </button>
+                          <button onClick={() => handleToggleBlock(user.id)}
+                            className={`p-1.5 rounded-lg cursor-pointer ${
+                              user.status === 'BLOCKED'
+                                ? 'text-green-500 hover:bg-green-50 dark:hover:bg-green-900/20'
+                                : 'text-danger-400 hover:bg-danger-50 dark:hover:bg-red-900/20'
+                            }`}
+                            title={user.status === 'BLOCKED' ? 'Desbloquear' : 'Bloquear'}>
+                            {user.status === 'BLOCKED' ? <ShieldOff className="w-4 h-4" /> : <Shield className="w-4 h-4" />}
+                          </button>
+                        </>
+                      )}
                     </div>
                   </td>
                 </tr>

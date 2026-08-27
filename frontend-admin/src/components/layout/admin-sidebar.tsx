@@ -267,7 +267,7 @@ export function AdminSidebar() {
         <div className="p-3 border-t border-neutral-200 dark:border-neutral-800">
           <button
             onClick={toggleSidebar}
-            className="flex items-center justify-center w-full p-2 rounded-lg text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer"
+            className="flex items-center justify-center w-full p-2 rounded-lg text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 cursor-pointer"
           >
             <ChevronDown className="h-4 w-4 -rotate-90" />
           </button>

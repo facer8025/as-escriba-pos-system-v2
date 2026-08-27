@@ -112,6 +112,8 @@ CREATE TABLE tenants (
     -- Técnico
     schema_name VARCHAR(100) UNIQUE NOT NULL, -- PostgreSQL schema name
     subdomain VARCHAR(100) UNIQUE, -- Subdominio opcional
+    admin_email VARCHAR(150), -- Email del usuario admin provisionado en el panel cliente
+    admin_user_id UUID, -- users.id del admin provisionado en el panel cliente
     timezone VARCHAR(50) DEFAULT 'America/Bogota',
     -- Fechas
     registered_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,

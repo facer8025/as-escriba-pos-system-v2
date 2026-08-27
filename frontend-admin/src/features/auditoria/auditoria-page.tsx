@@ -134,7 +134,7 @@ export function AuditoriaPage() {
                           <span className="font-mono text-[10px] text-neutral-400">{formatDateTime(log.timestamp)}</span>
                           <span className="font-medium text-neutral-900 dark:text-neutral-100">{log.adminEmail || 'Sistema'}</span>
                           <span className="text-neutral-500">{log.action}</span>
-                          {log.targetTenantName && <strong className="text-neutral-700">{log.targetTenantName}</strong>}
+                          {log.targetTenantName && <strong className="text-neutral-700 dark:text-neutral-200">{log.targetTenantName}</strong>}
                         </div>
                         {log.description && (
                           <p className="text-xs text-neutral-400 mt-0.5">{log.description}</p>
@@ -210,16 +210,16 @@ export function AuditoriaPage() {
             <h3 className="text-sm font-semibold mb-4">Resumen</h3>
             <div className="space-y-3">
               <div className="flex justify-between p-3 rounded-xl bg-neutral-50 dark:bg-neutral-800">
-                <span className="text-sm text-neutral-600">Nuevas</span>
+                <span className="text-sm text-neutral-600 dark:text-neutral-300">Nuevas</span>
                 <span className="text-sm font-bold text-danger-600">{alerts.filter((a: any) => a.status === 'NEW').length}</span>
               </div>
               <div className="flex justify-between p-3 rounded-xl bg-neutral-50 dark:bg-neutral-800">
-                <span className="text-sm text-neutral-600">Revisadas</span>
+                <span className="text-sm text-neutral-600 dark:text-neutral-300">Revisadas</span>
                 <span className="text-sm font-bold text-amber-600">{alerts.filter((a: any) => a.status === 'REVIEWED').length}</span>
               </div>
               <div className="flex justify-between p-3 rounded-xl bg-neutral-50 dark:bg-neutral-800">
-                <span className="text-sm text-neutral-600">Falso positivo</span>
-                <span className="text-sm font-bold text-neutral-600">{alerts.filter((a: any) => a.status === 'FALSE_POSITIVE').length}</span>
+                <span className="text-sm text-neutral-600 dark:text-neutral-300">Falso positivo</span>
+                <span className="text-sm font-bold text-neutral-600 dark:text-neutral-300">{alerts.filter((a: any) => a.status === 'FALSE_POSITIVE').length}</span>
               </div>
             </div>
           </div>

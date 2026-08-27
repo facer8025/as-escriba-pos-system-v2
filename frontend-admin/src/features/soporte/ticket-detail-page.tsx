@@ -11,17 +11,17 @@ import type { SupportTicket, TicketMessage, TicketStatus } from '@/types/admin'
 import { Modal } from '@/components/ui/modal'
 
 const PRIORITY_COLORS: Record<string, string> = {
-  CRITICAL: 'bg-danger-50 text-danger-600',
-  HIGH: 'bg-warning-50 text-warning-600',
-  MEDIUM: 'bg-info-50 text-info-600',
-  LOW: 'bg-neutral-100 text-neutral-500',
+  CRITICAL: 'bg-danger-50 text-danger-600 dark:bg-red-900/30 dark:text-red-400',
+  HIGH: 'bg-warning-50 text-warning-600 dark:bg-amber-900/30 dark:text-amber-400',
+  MEDIUM: 'bg-info-50 text-info-600 dark:bg-blue-900/30 dark:text-blue-400',
+  LOW: 'bg-neutral-100 text-neutral-500 dark:bg-neutral-700 dark:text-neutral-300',
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  OPEN: 'bg-neutral-100 text-neutral-600',
-  IN_PROGRESS: 'bg-escriba-50 text-escriba-600',
-  WAITING_CUSTOMER: 'bg-amber-50 text-amber-600',
-  CLOSED: 'bg-green-50 text-green-600',
+  OPEN: 'bg-neutral-100 text-neutral-600 dark:bg-neutral-700 dark:text-neutral-200',
+  IN_PROGRESS: 'bg-escriba-50 text-escriba-600 dark:bg-escriba-900/30 dark:text-escriba-400',
+  WAITING_CUSTOMER: 'bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400',
+  CLOSED: 'bg-green-50 text-green-600 dark:bg-green-900/30 dark:text-green-400',
 }
 
 const STATUS_LABELS: Record<string, string> = {
@@ -184,7 +184,7 @@ export function TicketDetailPage() {
                           {new Date(msg.createdAt).toLocaleString('es-CO')}
                         </span>
                         {msg.isInternalNote && (
-                          <span className="text-[10px] bg-amber-50 text-amber-600 px-1.5 py-0.5 rounded font-medium">
+                          <span className="text-[10px] bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400 px-1.5 py-0.5 rounded font-medium">
                             Interna
                           </span>
                         )}
@@ -239,20 +239,20 @@ export function TicketDetailPage() {
                 </span>
               </InfoRow>
               <InfoRow label="Categoría">
-                <span className="text-neutral-600">{CATEGORY_LABELS[ticket.category]}</span>
+                <span className="text-neutral-600 dark:text-neutral-300">{CATEGORY_LABELS[ticket.category]}</span>
               </InfoRow>
               <InfoRow label="Empresa">
-                <span className="text-neutral-600">{ticket.tenantName || '—'}</span>
+                <span className="text-neutral-600 dark:text-neutral-300">{ticket.tenantName || '—'}</span>
               </InfoRow>
               <InfoRow label="Mensajes">
-                <span className="text-neutral-600">{messages.length}</span>
+                <span className="text-neutral-600 dark:text-neutral-300">{messages.length}</span>
               </InfoRow>
               <InfoRow label="Asignado a">
                 <div className="flex items-center gap-1.5">
                   {ticket.assignedToName ? (
                     <>
                       <UserCheck className="w-3.5 h-3.5 text-escriba-500" />
-                      <span className="text-neutral-600">{ticket.assignedToName}</span>
+                      <span className="text-neutral-600 dark:text-neutral-300">{ticket.assignedToName}</span>
                     </>
                   ) : (
                     <span className="text-neutral-400">Sin asignar</span>
@@ -261,7 +261,7 @@ export function TicketDetailPage() {
               </InfoRow>
               {slaDeadline && (
                 <InfoRow icon={<AlertTriangle className={`w-4 h-4 ${slaUrgent ? 'text-danger-500' : 'text-neutral-400'}`} />} label="SLA">
-                  <span className={slaUrgent ? 'text-danger-600 font-medium' : 'text-neutral-600'}>
+                  <span className={slaUrgent ? 'text-danger-600 font-medium' : 'text-neutral-600 dark:text-neutral-300'}>
                     {slaDeadline.toLocaleString('es-CO')}
                     {ticket.slaBreached && ' (vencido)'}
                   </span>

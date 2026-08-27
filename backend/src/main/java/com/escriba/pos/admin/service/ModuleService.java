@@ -22,6 +22,7 @@ public class ModuleService {
         return moduleRepository.findByActiveTrueOrderBySortOrderAsc();
     }
 
+        @Transactional(readOnly = true)
     public List<TenantModule> getTenantModules(UUID tenantId) {
         return tenantModuleRepository.findByTenantId(tenantId);
     }

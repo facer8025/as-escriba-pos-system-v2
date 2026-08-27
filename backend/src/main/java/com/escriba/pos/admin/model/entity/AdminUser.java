@@ -30,6 +30,7 @@ public class AdminUser {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id", nullable = false)
+    @ToString.Exclude
     private AdminRole role;
 
     @Column(name = "password_hash", nullable = false)
@@ -72,6 +73,7 @@ public class AdminUser {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by")
+    @ToString.Exclude
     private AdminUser createdBy;
 
     @Column(name = "created_at", updatable = false)

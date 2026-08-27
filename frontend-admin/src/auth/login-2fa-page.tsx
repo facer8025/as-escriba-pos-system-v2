@@ -80,7 +80,7 @@ export function Login2FAPage() {
           <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-100">
             Verificación en dos pasos
           </h1>
-          <p className="text-sm text-neutral-500 mt-1">
+          <p className="text-sm text-neutral-500 dark:text-neutral-400 mt-1">
             Panel Administrativo ESCRIBA
           </p>
         </div>
@@ -142,7 +142,7 @@ export function Login2FAPage() {
               useAdminAuthStore.getState().logout()
               navigate('/login', { replace: true })
             }}
-            className="w-full mt-3 text-sm text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300 cursor-pointer"
+            className="w-full mt-3 text-sm text-neutral-500 dark:text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 cursor-pointer"
           >
             Volver al inicio de sesión
           </button>

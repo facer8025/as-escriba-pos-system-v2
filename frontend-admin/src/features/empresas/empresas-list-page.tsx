@@ -69,7 +69,7 @@ export function EmpresasListPage() {
           </p>
         </div>
         {canWrite && (
-          <Link to="/empresas/crear" className="btn-primary flex items-center gap-2">
+          <Link to="/empresas/nueva" className="btn-primary flex items-center gap-2">
             <Plus size={16} /> Nueva empresa
           </Link>
         )}

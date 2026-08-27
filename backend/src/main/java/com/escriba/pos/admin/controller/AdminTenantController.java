@@ -1,11 +1,13 @@
 package com.escriba.pos.admin.controller;
 
 import com.escriba.pos.admin.model.dto.request.CreateTenantRequest;
+import com.escriba.pos.admin.model.dto.request.ResetTenantPasswordRequest;
 import com.escriba.pos.admin.model.dto.response.TenantResponse;
 import com.escriba.pos.admin.model.entity.AdminUser;
 import com.escriba.pos.admin.security.AdminJwtTokenProvider;
 import com.escriba.pos.admin.service.TenantService;
 import com.escriba.pos.dto.response.ApiResponse;
+import com.escriba.pos.dto.response.UserResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -15,6 +17,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -71,6 +74,26 @@ public class AdminTenantController {
             @RequestParam(required = false) String reason) {
         return ResponseEntity.ok(ApiResponse.success(
                 tenantService.updateTenantStatus(id, status, reason)));
+    }
+
+    /**
+     * Asigna (o reasigna) la contraseña del usuario administrador de la empresa.
+     * Si la empresa no tiene usuario provisionado, lo crea (junto con companies/branches).
+     */
+    @PostMapping("/{id}/reset-password")
+    public ResponseEntity<ApiResponse<Map<String, Object>>> resetPassword(
+            @PathVariable UUID id,
+            @RequestBody(required = false) ResetTenantPasswordRequest request) {
+        String password = request != null ? request.getPassword() : null;
+        return ResponseEntity.ok(ApiResponse.success(
+                "Contraseña del admin asignada",
+                tenantService.resetTenantAdminPassword(id, password)));
+    }
+
+    /** Lista los usuarios del aplicativo de empresas (panel cliente) del tenant. */
+    @GetMapping("/{id}/users")
+    public ResponseEntity<ApiResponse<List<UserResponse>>> listTenantUsers(@PathVariable UUID id) {
+        return ResponseEntity.ok(ApiResponse.success(tenantService.listTenantUsers(id)));
     }
 
     private AdminUser findAdminUser(Authentication auth) {

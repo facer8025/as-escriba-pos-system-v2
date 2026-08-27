@@ -1,10 +1,13 @@
 package com.escriba.pos.admin.controller;
 
+import com.escriba.pos.admin.model.dto.request.AdminChangePasswordRequest;
 import com.escriba.pos.admin.model.dto.request.AdminLoginRequest;
 import com.escriba.pos.admin.model.dto.request.AdminRefreshRequest;
 import com.escriba.pos.admin.model.dto.request.AdminTotpVerifyRequest;
+import com.escriba.pos.admin.model.dto.request.AdminUpdateProfileRequest;
 import com.escriba.pos.admin.model.dto.response.AdminAuthResponse;
 import com.escriba.pos.admin.model.dto.response.AdminUserResponse;
+import com.escriba.pos.admin.model.entity.AdminUser;
 import com.escriba.pos.admin.service.AdminAuthService;
 import com.escriba.pos.dto.response.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
@@ -54,8 +57,33 @@ public class AdminAuthController {
 
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<AdminUserResponse>> me(Authentication authentication) {
-        UUID userId = (UUID) authentication.getPrincipal();
+        UUID userId = principalUserId(authentication);
         AdminUserResponse response = authService.getProfile(userId);
         return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
+    @PutMapping("/me")
+    public ResponseEntity<ApiResponse<AdminUserResponse>> updateProfile(
+            Authentication authentication,
+            @Valid @RequestBody AdminUpdateProfileRequest request) {
+        UUID userId = principalUserId(authentication);
+        AdminUserResponse response = authService.updateProfile(userId, request);
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<ApiResponse<Void>> changePassword(
+            Authentication authentication,
+            @Valid @RequestBody AdminChangePasswordRequest request) {
+        UUID userId = principalUserId(authentication);
+        authService.changePassword(userId, request);
+        return ResponseEntity.ok(ApiResponse.success("Contraseña actualizada exitosamente", null));
+    }
+
+    private UUID principalUserId(Authentication authentication) {
+        if (authentication.getPrincipal() instanceof AdminUser adminUser) {
+            return adminUser.getId();
+        }
+        return (UUID) authentication.getPrincipal();
     }
 }

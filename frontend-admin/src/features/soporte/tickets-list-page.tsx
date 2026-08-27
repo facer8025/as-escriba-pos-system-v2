@@ -122,7 +122,7 @@ export function TicketsListPage() {
       {/* Stats cards */}
       {stats && (
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
-          <StatCard label="Abiertos" value={stats.openTickets} color="text-neutral-600" />
+          <StatCard label="Abiertos" value={stats.openTickets} color="text-neutral-600 dark:text-neutral-300" />
           <StatCard label="En progreso" value={stats.inProgressTickets} color="text-escriba-600" />
           <StatCard label="Esperando" value={stats.waitingCustomerTickets} color="text-amber-600" />
           <StatCard label="Cerrados hoy" value={stats.closedToday} color="text-green-600" />
@@ -229,7 +229,7 @@ export function TicketsListPage() {
                           )}
                         </div>
                         {ticket.lastMessage && (
-                          <p className="text-[11px] text-neutral-400 mt-0.5 truncate max-w-[280px]">{ticket.lastMessage}</p>
+                          <p className="text-[10px] text-neutral-400 mt-0.5 truncate max-w-[280px]">{ticket.lastMessage}</p>
                         )}
                       </td>
                       <td className="px-4 py-3 text-sm text-neutral-500">{ticket.tenantName || '—'}</td>
@@ -249,7 +249,7 @@ export function TicketsListPage() {
                           {ticket.assignedToName ? (
                             <>
                               <UserCheck className="w-3.5 h-3.5 text-escriba-500" />
-                              <span className="text-sm text-neutral-600">{ticket.assignedToName.split(' ')[0]}</span>
+                              <span className="text-sm text-neutral-600 dark:text-neutral-300">{ticket.assignedToName.split(' ')[0]}</span>
                             </>
                           ) : (
                             <span className="text-sm text-neutral-400">—</span>
